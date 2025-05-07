@@ -1,0 +1,3941 @@
+This file is a merged representation of the entire codebase, combined into a single document by Repomix.
+
+<file_summary>
+This section contains a summary of this file.
+
+<purpose>
+This file contains a packed representation of the entire repository's contents.
+It is designed to be easily consumable by AI systems for analysis, code review,
+or other automated processes.
+</purpose>
+
+<file_format>
+The content is organized as follows:
+1. This summary section
+2. Repository information
+3. Directory structure
+4. Repository files, each consisting of:
+  - File path as an attribute
+  - Full contents of the file
+</file_format>
+
+<usage_guidelines>
+- This file should be treated as read-only. Any changes should be made to the
+  original repository files, not this packed version.
+- When processing this file, use the file path to distinguish
+  between different files in the repository.
+- Be aware that this file may contain sensitive information. Handle it with
+  the same level of security as you would the original repository.
+</usage_guidelines>
+
+<notes>
+- Some files may have been excluded based on .gitignore rules and Repomix's configuration
+- Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
+- Files matching patterns in .gitignore are excluded
+- Files matching default ignore patterns are excluded
+- Files are sorted by Git change count (files with more changes are at the bottom)
+</notes>
+
+<additional_info>
+
+</additional_info>
+
+</file_summary>
+
+<directory_structure>
+.husky/
+  pre-commit
+.storybook/
+  main.ts
+  preview.ts
+public/
+  index.html
+src/
+  components/
+    arrow-button/
+      ArrowButton.module.scss
+      ArrowButton.stories.tsx
+      ArrowButton.tsx
+      index.tsx
+    article/
+      Article.module.scss
+      Article.tsx
+      index.tsx
+    article-params-form/
+      components/
+        BackgroundColorSelect.tsx
+        ContentWidthSelect.tsx
+        FontColorSelect.tsx
+        FontFamilySelect.tsx
+        FontSizeRadioGroup.tsx
+      hooks/
+        useArticleStyleControls.ts
+      types/
+        select-control-props.type.ts
+      ArticleParamsForm.module.scss
+      ArticleParamsForm.tsx
+      index.tsx
+    button/
+      Button.module.scss
+      Button.stories.tsx
+      Button.tsx
+      index.tsx
+    radio-group/
+      hooks/
+        useEnterSubmit.ts
+      index.tsx
+      Option.tsx
+      RadioGroup.module.scss
+      RadioGroup.stories.tsx
+      RadioGroup.tsx
+    select/
+      helpers/
+        isFontFamilyClass.ts
+      hooks/
+        useEnterOptionSubmit.tsx
+        useEnterSubmit.ts
+        useOutsideClickClose.ts
+      index.tsx
+      Option.tsx
+      Select.module.scss
+      Select.stories.tsx
+      Select.tsx
+    separator/
+      index.module.scss
+      index.tsx
+      Separator.stories.tsx
+      Separator.tsx
+    spacing/
+      index.module.scss
+      index.tsx
+      Spacing.tsx
+    story-decorator/
+      index.tsx
+      StoryDecorator.module.scss
+      StoryDecorator.tsx
+    text/
+      index.module.scss
+      index.tsx
+      Text.stories.tsx
+      Text.tsx
+  constants/
+    articleProps.ts
+  fonts/
+    font-files/
+      Cormorant_Garamond/
+        OFL.txt
+      Days_One/
+        OFL.txt
+      Merriweather/
+        OFL.txt
+      Open_Sans/
+        OFL.txt
+        README.txt
+      Ubuntu/
+        UFL.txt
+    font.scss
+  images/
+    arrow-down.svg
+    arrow.svg
+    narrow.svg
+    react.svg
+    typescript.svg
+    wide.svg
+  styles/
+    index.module.scss
+    index.scss
+  custom.d.ts
+  index.tsx
+webpack/
+  webpack.common.js
+  webpack.config.js
+  webpack.dev.js
+  webpack.prod.js
+.editorconfig
+.eslintignore
+.eslintrc.js
+.gitattributes
+.gitignore
+.prettierignore
+.prettierrc.js
+.stylelintignore
+.stylelintrc.json
+.yarnrc.yml
+package.json
+postcss.config.js
+README.md
+tsconfig.json
+</directory_structure>
+
+<files>
+This section contains the contents of the repository's files.
+
+<file path=".husky/pre-commit">
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+npx lint-staged
+</file>
+
+<file path=".storybook/main.ts">
+import type { StorybookConfig } from '@storybook/react-webpack5';
+const path = require('path');
+
+const config: StorybookConfig = {
+	stories: ['../src/**/*.mdx', '../src/**/*.stories.@(js|jsx|mjs|ts|tsx)'],
+	addons: [
+		'@storybook/addon-links',
+		'@storybook/addon-essentials',
+		'@storybook/addon-onboarding',
+		'@storybook/addon-interactions',
+		'@storybook/addon-styling-webpack',
+		{
+			name: '@storybook/addon-styling-webpack',
+
+			options: {
+				rules: [
+					{
+						test: /\.css$/,
+						sideEffects: true,
+						use: [
+							require.resolve('style-loader'),
+							{
+								loader: require.resolve('css-loader'),
+								options: {
+									// Want to add more CSS Modules options? Read more here: https://github.com/webpack-contrib/css-loader#modules
+									modules: {
+										auto: true,
+									},
+								},
+							},
+						],
+					},
+					{
+						test: /\.s[ac]ss$/,
+						sideEffects: true,
+						use: [
+							require.resolve('style-loader'),
+							{
+								loader: require.resolve('css-loader'),
+								options: {
+									// Want to add more CSS Modules options? Read more here: https://github.com/webpack-contrib/css-loader#modules
+									modules: {
+										auto: true,
+									},
+									importLoaders: 2,
+								},
+							},
+							require.resolve('resolve-url-loader'),
+							{
+								loader: require.resolve('sass-loader'),
+								options: {
+									// Want to add more Sass options? Read more here: https://webpack.js.org/loaders/sass-loader/#options
+									implementation: require.resolve('sass'),
+									sourceMap: true,
+									sassOptions: {},
+								},
+							},
+						],
+					},
+				],
+			},
+		},
+	],
+	webpackFinal: async (config) => {
+		if (config?.resolve?.alias) {
+			config.resolve.alias = {
+				fonts: path.resolve(__dirname, '..', './src/fonts'),
+				src: path.resolve(__dirname, '..', './src'),
+				components: path.resolve(__dirname, '..', './src/components'),
+			};
+		}
+
+		return config;
+	},
+	framework: {
+		name: '@storybook/react-webpack5',
+		options: {
+			builder: {
+				useSWC: true,
+			},
+		},
+	},
+	swc: () => ({
+		jsc: {
+			transform: {
+				react: {
+					runtime: 'automatic',
+				},
+			},
+		},
+	}),
+	docs: {
+		autodocs: 'tag',
+	},
+};
+export default config;
+</file>
+
+<file path=".storybook/preview.ts">
+import type { Preview } from "@storybook/react";
+import { StoryDecorator } from "../src/components/story-decorator/StoryDecorator";
+
+const preview: Preview = {
+  parameters: {
+    actions: { argTypesRegex: "^on[A-Z].*" },
+    controls: {
+      matchers: {
+        color: /(background|color)$/i,
+        date: /Date$/i,
+      },
+    },
+  },
+  decorators: [StoryDecorator],
+};
+
+export default preview;
+</file>
+
+<file path="public/index.html">
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+
+  <body>
+    <div id="root"></div>
+  </body>
+</html>
+</file>
+
+<file path="src/components/arrow-button/ArrowButton.module.scss">
+.container {
+  position: fixed;
+  top: 31px;
+  display: flex;
+  flex-shrink: 0;
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
+  width: 100px;
+  height: 100px;
+  background-color: #000000;
+  border-right: 1px;
+  transition: transform 0.5s ease;
+}
+
+.container_open {
+  transform: translate(616px);
+}
+
+.arrow {
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  transform: rotate(180deg);
+  transition: transform 0.5s ease;
+}
+
+.arrow_open {
+  transform: rotate(0deg);
+}
+</file>
+
+<file path="src/components/arrow-button/ArrowButton.stories.tsx">
+import type { Meta, StoryObj } from '@storybook/react';
+
+import { ArrowButton } from './ArrowButton';
+
+const meta: Meta<typeof ArrowButton> = {
+	component: ArrowButton,
+};
+
+export default meta;
+type Story = StoryObj<typeof ArrowButton>;
+
+export const ArrowButtonStory: Story = {
+	render: () => {
+		return (
+			<>
+				<ArrowButton />
+			</>
+		);
+	},
+};
+</file>
+
+<file path="src/components/arrow-button/ArrowButton.tsx">
+import clsx from 'clsx';
+import type { FC } from 'react';
+
+import arrow from 'src/images/arrow.svg';
+
+import styles from './ArrowButton.module.scss';
+
+/** Функция для обработки открытия/закрытия формы */
+export type OnClick = () => void;
+
+export interface ArrowButtonProps {
+	onClick?: OnClick;
+	isOpened?: boolean;
+}
+
+export const ArrowButton: FC<ArrowButtonProps> = ({ onClick, isOpened }) => {
+	return (
+		<div
+			role='button'
+			aria-label='Открыть/Закрыть форму параметров статьи'
+			tabIndex={0}
+			onClick={onClick}
+			className={clsx(styles.container, isOpened && styles.container_open)}>
+			<img
+				src={arrow}
+				alt='иконка стрелочки'
+				className={clsx(styles.arrow, isOpened && styles.arrow_open)}
+			/>
+		</div>
+	);
+};
+</file>
+
+<file path="src/components/arrow-button/index.tsx">
+export { ArrowButton } from './ArrowButton';
+</file>
+
+<file path="src/components/article/Article.module.scss">
+.article {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  max-width: var(--container-width, auto);
+  margin: 0 auto;
+  padding: 72px 0 144px;
+}
+
+.titleDescription {
+  max-width: 550px;
+}
+
+.image {
+  width: 100%;
+  height: auto;
+}
+</file>
+
+<file path="src/components/article/Article.tsx">
+import clsx from 'clsx';
+
+// Сообщаем вебпаку, что этот файл использует это изображение.
+import { Spacing } from 'components/spacing';
+import { Text } from 'components/text';
+import plane from 'src/images/plane.png';
+
+import styles from './Article.module.scss';
+
+export const Article = () => {
+	return (
+		<article className={clsx(styles.article)}>
+			<Text as='h1' size={45} weight={800} uppercase dynamicLite>
+				Портрет Западной Швейцарии
+			</Text>
+			<Spacing size={30} />
+			<div className={styles.titleDescription}>
+				<Text size={22} weight={800} uppercase align='center' dynamicLite>
+					Примитивист Фиштр расписывает новый бюджетный авиалайнер
+				</Text>
+			</div>
+			<Spacing size={72} />
+			<img className={styles.image} src={plane} alt='Картинка самолета' />
+			<Spacing size={18} />
+			<Text dynamic size={18} fontStyle='italic'>
+				Фото: Hans-Peter Gauster , {'Bombardier CSeries CS300 HB-JCA'} © 2017 CC
+				BY-SA 2.0
+			</Text>
+			<Spacing size={72} />
+			<Text dynamic size={18}>
+				В конце 2016 года швейцарская авиакомпания Swiss получила свой первый
+				канадский «Бомбардье CS300» для полётов малой и средней дальности. Чтобы
+				придать новой 145-местной машине неповторимую индивидуальность, ливрею
+				заказали живописцу. При условии, что эскиз он выполнит в одиночку и
+				лично поправит роспись, когда её будут наносить на фюзеляж.
+			</Text>
+			<Spacing size={30} />
+
+			<Text dynamic size={18}>
+				Выбор пал на примитивиста Матиаса Форбаша, работающего под псевдонимом
+				Фиштр. Ему поставили задачу изобразить всё лучшее во франкоговорящей
+				части Швейцарии — горы, озёра, вина, сыры, доброжелательность и свободу.
+				Заказ был выполнен в рекордный срок, всего за 5 месяцев. Самолёт
+				получился похожим на самого художника: такой же добродушный и с улыбкой
+				до ушей.
+			</Text>
+			<Spacing size={30} />
+			<Text dynamic size={18}>
+				С мая 2017 года {'Бомбардье'} носит имя {'Швейцарская Романдия'} и
+				регистрационный номер HB-JCA ; совершает в среднем 4 коммерческих полёта
+				в сутки. Его можно видеть в {'Домодедово'}, а также в аэропортах Парижа,
+				Валенсии, Кракова, Берлина, Вены, Загреба, на Майорке, Крите и Сицилии.
+				Самолёт останется в той же ливрее, пока его не купит другая
+				авиакомпания.
+			</Text>
+		</article>
+	);
+};
+</file>
+
+<file path="src/components/article/index.tsx">
+export { Article } from './Article';
+</file>
+
+<file path="src/components/article-params-form/components/BackgroundColorSelect.tsx">
+import type { FC } from 'react';
+
+import { Select } from 'src/components/select';
+import { backgroundColors } from 'src/constants/articleProps';
+
+import type { SelectControlPropsType } from '../types/select-control-props.type';
+
+type BackgroundColorSelectProps = SelectControlPropsType;
+
+export const BackgroundColorSelect: FC<BackgroundColorSelectProps> = ({
+	selected,
+	onChange,
+}) => {
+	return (
+		<Select
+			selected={selected}
+			options={backgroundColors}
+			title='Цвет фона'
+			onChange={onChange}
+		/>
+	);
+};
+</file>
+
+<file path="src/components/article-params-form/components/ContentWidthSelect.tsx">
+import type { FC } from 'react';
+
+import { Select } from 'src/components/select';
+import { contentWidthArr } from 'src/constants/articleProps';
+
+import type { SelectControlPropsType } from '../types/select-control-props.type';
+
+type ContentWidthSelectProps = SelectControlPropsType;
+
+export const ContentWidthSelect: FC<ContentWidthSelectProps> = ({
+	selected,
+	onChange,
+}) => {
+	return (
+		<Select
+			title='Ширина контента'
+			selected={selected}
+			onChange={onChange}
+			options={contentWidthArr}
+		/>
+	);
+};
+</file>
+
+<file path="src/components/article-params-form/components/FontColorSelect.tsx">
+import type { FC } from 'react';
+
+import { Select } from 'src/components/select';
+import { fontColors } from 'src/constants/articleProps';
+
+import type { SelectControlPropsType } from '../types/select-control-props.type';
+
+type FontColorSelectProps = SelectControlPropsType;
+
+export const FontColorSelect: FC<FontColorSelectProps> = ({
+	selected,
+	onChange,
+}) => {
+	return (
+		<Select
+			selected={selected}
+			onChange={onChange}
+			title='Цвет шрифта'
+			options={fontColors}
+		/>
+	);
+};
+</file>
+
+<file path="src/components/article-params-form/components/FontFamilySelect.tsx">
+import type { FC } from 'react';
+
+import { Select } from 'src/components/select';
+import { fontFamilyOptions } from 'src/constants/articleProps';
+
+import type { SelectControlPropsType } from '../types/select-control-props.type';
+
+type FontFamilySelectProps = SelectControlPropsType;
+
+export const FontFamilySelect: FC<FontFamilySelectProps> = ({
+	onChange,
+	selected,
+}) => {
+	return (
+		<Select
+			title='Шрифт'
+			options={fontFamilyOptions}
+			selected={selected}
+			onChange={onChange}
+		/>
+	);
+};
+</file>
+
+<file path="src/components/article-params-form/components/FontSizeRadioGroup.tsx">
+import type { FC } from 'react';
+
+import { RadioGroup } from 'src/components/radio-group';
+import { fontSizeOptions } from 'src/constants/articleProps';
+
+import type { SelectControlPropsType } from '../types/select-control-props.type';
+
+type FontSizeRadioGroupProps = SelectControlPropsType;
+
+export const FontSizeRadioGroup: FC<FontSizeRadioGroupProps> = ({
+	onChange,
+	selected,
+}) => {
+	return (
+		<RadioGroup
+			title={'Размер шрифта'}
+			name={'font-size'}
+			options={fontSizeOptions}
+			selected={selected}
+			onChange={onChange}
+		/>
+	);
+};
+</file>
+
+<file path="src/components/article-params-form/hooks/useArticleStyleControls.ts">
+import { useEffect, useState } from 'react';
+import type { CSSProperties } from 'react';
+
+import { defaultArticleState } from 'src/constants/articleProps';
+import type { ArticleStateType, OptionType } from 'src/constants/articleProps';
+
+
+export const useArticleStyleControls = () => {
+	const [articleState, setArticleState] = useState(defaultArticleState);
+	const [articleStyles, setArticleStyles] = useState<CSSProperties>({});
+
+	const registerStyleControl = (key: keyof ArticleStateType) => {
+		return {
+			onChange: (value: OptionType) => {
+				setArticleState((prev) => ({
+					...prev,
+					[key]: value,
+				}));
+			},
+			selected: articleState[key],
+		};
+	};
+
+	const updateStyles = (state: ArticleStateType = articleState) => {
+		setArticleStyles({
+			'--font-family': state.fontFamilyOption.value,
+			'--font-size': state.fontSizeOption.value,
+			'--font-color': state.fontColor.value,
+			'--container-width': state.contentWidth.value,
+			'--bg-color': state.backgroundColor.value,
+		} as CSSProperties);
+	};
+
+	const resetStyles = () => {
+		setArticleState(defaultArticleState);
+		updateStyles(defaultArticleState);
+	};
+
+	useEffect(() => {
+		updateStyles();
+	}, []);
+
+	return {articleStyles, registerStyleControl, updateStyles, resetStyles};
+}
+</file>
+
+<file path="src/components/article-params-form/types/select-control-props.type.ts">
+import type { OptionType } from 'src/constants/articleProps';
+
+export type SelectControlPropsType = {
+	onChange?: (selected: OptionType) => void;
+	selected: OptionType;
+}
+</file>
+
+<file path="src/components/article-params-form/ArticleParamsForm.module.scss">
+.wrapper {
+	position: absolute;
+	inset: 0;
+}
+
+.container {
+	position: fixed;
+	left: 0;
+	width: 616px;
+	height: 100%;
+	overflow: auto;
+	transform: translate(-616px);
+	transition: transform 0.5s ease;
+}
+
+.container_open {
+	transform: translate(0);
+}
+
+.form {
+	display: flex;
+	flex-shrink: 0;
+	flex-direction: column;
+	box-sizing: border-box;
+	width: 616px;
+	height: auto;
+	min-height: 100%;
+	padding: 50px 31px;
+	background-color: #ffffff;
+	border-right: 1px solid #000000;
+}
+
+.bottomContainer {
+	display: flex;
+	justify-content: space-between;
+	margin-top: auto;
+}
+</file>
+
+<file path="src/components/article-params-form/ArticleParamsForm.tsx">
+import clsx from 'clsx';
+import type { FC, FormEvent, PropsWithChildren } from 'react';
+import { useState } from 'react';
+
+import { ArrowButton } from 'components/arrow-button';
+import { Button } from 'components/button';
+import { Text } from 'components/text';
+
+import styles from './ArticleParamsForm.module.scss';
+
+export interface ArticleParamsFormProps {
+	onSubmit?: () => void;
+	onReset?: () => void;
+}
+
+export const ArticleParamsForm: FC<
+	PropsWithChildren<ArticleParamsFormProps>
+> = ({ children, onSubmit, onReset }) => {
+	const [isOpen, setIsOpen] = useState(false);
+
+	const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+		event.preventDefault();
+		onSubmit?.();
+	};
+
+	const handleReset = (event: FormEvent<HTMLFormElement>) => {
+		event.preventDefault();
+		onReset?.();
+	};
+
+	const handleOutsideClick = (e: React.MouseEvent) => {
+		e.stopPropagation();
+
+		setIsOpen(false);
+	};
+
+	return (
+		<>
+			{isOpen && (
+				<div className={styles.wrapper} onClick={handleOutsideClick}></div>
+			)}
+			<ArrowButton
+				onClick={() => setIsOpen((prev) => !prev)}
+				isOpened={isOpen}
+			/>
+			<aside
+				className={clsx(styles.container, isOpen && styles.container_open)}>
+				<form
+					className={styles.form}
+					onSubmit={handleSubmit}
+					onReset={handleReset}>
+					<Text as='h2' weight={800} size={31} uppercase>
+						Задайте параметры
+					</Text>
+					<div className={styles.content}>{children}</div>
+					<div className={styles.bottomContainer}>
+						<Button title='Сбросить' type='reset' />
+						<Button title='Применить' type='submit' />
+					</div>
+				</form>
+			</aside>
+		</>
+	);
+};
+</file>
+
+<file path="src/components/article-params-form/index.tsx">
+export { ArticleParamsForm } from './ArticleParamsForm';
+export { BackgroundColorSelect } from './components/BackgroundColorSelect';
+export { ContentWidthSelect } from './components/ContentWidthSelect';
+export { FontColorSelect } from './components/FontColorSelect';
+export { FontFamilySelect } from './components/FontFamilySelect';
+export { FontSizeRadioGroup } from './components/FontSizeRadioGroup';
+export { useArticleStyleControls } from './hooks/useArticleStyleControls';
+</file>
+
+<file path="src/components/button/Button.module.scss">
+.button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
+  width: 210px;
+  height: 50px;
+  text-align: center;
+  border: 1px solid #000000;
+  cursor: pointer;
+}
+
+.button:active {
+  background: var(--gold, #ffc802);
+}
+
+.button:hover {
+  background: var(--gold, #ffc802);
+}
+</file>
+
+<file path="src/components/button/Button.stories.tsx">
+import type { Meta, StoryObj } from '@storybook/react';
+
+import { Button } from './Button';
+
+const meta: Meta<typeof Button> = {
+	component: Button,
+};
+
+export default meta;
+type Story = StoryObj<typeof Button>;
+
+export const ButtonStory: Story = {
+	render: () => {
+		return (
+			<>
+				<Button
+					title='Сбросить'
+					type='reset'
+					onClick={() => alert('клик на кнопку сбросить')}
+				/>
+				<Button
+					title='Применить'
+					type='submit'
+					onClick={() => alert('клик на кнопку применить')}
+				/>
+			</>
+		);
+	},
+};
+</file>
+
+<file path="src/components/button/Button.tsx">
+import { Text } from 'components/text';
+
+import styles from './Button.module.scss';
+
+export const Button = ({
+	title,
+	onClick,
+	type,
+}: {
+	title: string;
+	onClick?: () => void;
+	type?: React.ButtonHTMLAttributes<HTMLButtonElement>['type'];
+}) => {
+	return (
+		<button className={styles.button} type={type} onClick={onClick}>
+			<Text weight={800} uppercase>
+				{title}
+			</Text>
+		</button>
+	);
+};
+</file>
+
+<file path="src/components/button/index.tsx">
+export { Button } from './Button';
+</file>
+
+<file path="src/components/radio-group/hooks/useEnterSubmit.ts">
+import { useEffect, useRef } from 'react';
+
+import type { OptionType } from 'src/constants/articleProps';
+
+type UseEnterSubmit = {
+	onChange?: (option: OptionType) => void;
+	option: OptionType;
+};
+
+export const useEnterSubmit = ({ onChange, option }: UseEnterSubmit) => {
+	const optionRef = useRef<HTMLDivElement>(null);
+
+	useEffect(() => {
+		const optionHtml = optionRef.current;
+
+		if (!optionHtml) return;
+
+		const handleEnterKeyDown = (event: KeyboardEvent) => {
+			if (document.activeElement === optionHtml && event.key === 'Enter') {
+				onChange?.(option);
+			}
+		};
+
+		optionHtml.addEventListener('keydown', handleEnterKeyDown);
+
+		// не забываем удалять листенеры, при размонтировании компонента
+		return () => {
+			optionHtml.removeEventListener('keydown', handleEnterKeyDown);
+		};
+	}, [onChange]);
+};
+</file>
+
+<file path="src/components/radio-group/index.tsx">
+export { RadioGroup } from './RadioGroup';
+</file>
+
+<file path="src/components/radio-group/Option.tsx">
+import { useRef } from 'react';
+
+import { Text } from 'components/text';
+import type { OptionType } from 'src/constants/articleProps';
+
+import { useEnterSubmit } from './hooks/useEnterSubmit';
+import styles from './RadioGroup.module.scss';
+
+type OptionProps = {
+	value: OptionType['value'];
+	title: OptionType['title'];
+	selected: OptionType;
+	groupName: string;
+	onChange?: (option: OptionType) => void;
+	option: OptionType;
+};
+
+export const Option = (props: OptionProps) => {
+	const { value, title, selected, groupName, onChange, option } = props;
+
+	const optionRef = useRef<HTMLDivElement>(null);
+
+	const handleChange = () => onChange?.(option);
+
+	useEnterSubmit({ onChange, option });
+
+	const inputId = `${groupName}_radio_item_with_value__${value}`;
+	const isChecked = value === selected.title;
+
+	return (
+		<div
+			className={styles.item}
+			key={value}
+			data-checked={isChecked}
+			data-testid={inputId}
+			tabIndex={0}
+			ref={optionRef}>
+			<input
+				className={styles.input}
+				type='radio'
+				name={groupName}
+				id={inputId}
+				value={value}
+				onChange={handleChange}
+				tabIndex={-1}
+			/>
+			<label className={styles.label} htmlFor={inputId}>
+				<Text size={18} uppercase>
+					{title}
+				</Text>
+			</label>
+		</div>
+	);
+};
+</file>
+
+<file path="src/components/radio-group/RadioGroup.module.scss">
+.group {
+	display: inline-flex;
+	box-sizing: border-box;
+	max-width: fit-content;
+	border: 1px solid #000000;
+}
+
+.item {
+	position: relative;
+	display: block;
+}
+
+.input {
+	position: absolute;
+	width: 0;
+	height: 0;
+	margin: 0;
+	padding: 0;
+	opacity: 0;
+}
+
+.label {
+	display: flex;
+	flex-shrink: 0;
+	justify-content: center;
+	align-items: center;
+	box-sizing: border-box;
+	width: 124px;
+	height: 35px;
+	text-align: center;
+	border-right: 1px solid #000000;
+	cursor: pointer;
+}
+
+/* Убираем бордер у последнего в radiogroup, чтобы не было двойного бордера */
+
+.item[data-checked='true'] .label {
+	background: var(--gold, #ffc802);
+}
+
+.label:hover,
+.item[data-checked='true'] .label:hover {
+	background: var(--gold, #ffc802);
+}
+
+.item:last-child .label {
+	border: none;
+}
+</file>
+
+<file path="src/components/radio-group/RadioGroup.stories.tsx">
+import type { Meta, StoryObj } from '@storybook/react';
+import { useState } from 'react';
+
+import { RadioGroup } from './RadioGroup';
+
+const meta: Meta<typeof RadioGroup> = {
+	component: RadioGroup,
+};
+
+export default meta;
+type Story = StoryObj<typeof RadioGroup>;
+
+export const RadioGroupStory: Story = {
+	render: () => {
+		const options = [
+			{ title: '1 опция', value: '1 опция', className: '' },
+			{ title: '2 опция', value: '2 опция', className: '' },
+			{ title: '3 опция', value: '3 опция', className: '' },
+			{ title: '4 опция', value: '4 опция', className: '' },
+		];
+		const [selected, setSelected] = useState(options[0]);
+
+		return (
+			<>
+				<RadioGroup
+					selected={selected}
+					name='radio'
+					onChange={setSelected}
+					options={options}
+					title='Название радиогруппы'
+				/>
+			</>
+		);
+	},
+};
+</file>
+
+<file path="src/components/radio-group/RadioGroup.tsx">
+import { Spacing } from 'components/spacing';
+import { Text } from 'components/text';
+import type { OptionType } from 'src/constants/articleProps';
+
+import { Option } from './Option';
+import styles from './RadioGroup.module.scss';
+
+type RadioGroupProps = {
+	name: string;
+	options: OptionType[];
+	selected: OptionType;
+	onChange?: (value: OptionType) => void;
+	title: string;
+};
+
+export const RadioGroup = (props: RadioGroupProps) => {
+	const { name, options, selected, onChange, title } = props;
+
+	const handleChange = (option: OptionType) => onChange?.(option);
+
+	return (
+		<div className={styles.container}>
+			{title && (
+				<>
+					<Text weight={800} size={12} uppercase>
+						{title}
+					</Text>
+					<Spacing size={4} />
+				</>
+			)}
+			<div className={styles.group}>
+				{options.map((option) => (
+					<Option
+						key={option.value}
+						groupName={name}
+						value={option.value}
+						title={option.title}
+						selected={selected}
+						onChange={() => handleChange(option)}
+						option={option}
+					/>
+				))}
+			</div>
+		</div>
+	);
+};
+</file>
+
+<file path="src/components/select/helpers/isFontFamilyClass.ts">
+import type {
+	FontFamiliesClasses} from 'src/constants/articleProps';
+import {
+	fontFamilyClasses,
+} from 'src/constants/articleProps';
+
+/** Так выглядят typeGuards в ts, он позволяет нам определить является ли переменная определенным типом.
+ * Подробнее о них можно почитать тут - https://www.typescriptlang.org/docs/handbook/advanced-types.html */
+export function isFontFamilyClass(
+	family?: string | FontFamiliesClasses
+): family is FontFamiliesClasses {
+	return fontFamilyClasses.includes(family as FontFamiliesClasses);
+}
+</file>
+
+<file path="src/components/select/hooks/useEnterOptionSubmit.tsx">
+import { useEffect } from 'react';
+
+import type { OptionType } from 'src/constants/articleProps';
+
+type UseEnterOptionSubmit = {
+	onClick: (value: OptionType['value']) => void;
+	value: OptionType['value'];
+	optionRef: React.RefObject<HTMLLIElement>;
+};
+
+export const useEnterOptionSubmit = ({
+	onClick,
+	value,
+	optionRef,
+}: UseEnterOptionSubmit) => {
+	useEffect(() => {
+		const option = optionRef.current;
+		if (!option) return;
+		const handleEnterKeyDown = (event: KeyboardEvent) => {
+			if (document.activeElement === option && event.key === 'Enter') {
+				onClick(value);
+			}
+		};
+
+		option.addEventListener('keydown', handleEnterKeyDown);
+		return () => {
+			option.removeEventListener('keydown', handleEnterKeyDown);
+		};
+	}, [value, onClick]);
+};
+</file>
+
+<file path="src/components/select/hooks/useEnterSubmit.ts">
+import { useEffect } from 'react';
+
+type UseEnterSubmit = {
+	onChange: (isOpen: (prevState: boolean) => boolean) => void;
+	placeholderRef: React.RefObject<HTMLDivElement>;
+};
+
+export const useEnterSubmit = ({
+	placeholderRef,
+	onChange,
+}: UseEnterSubmit) => {
+	useEffect(() => {
+		const placeholderEl = placeholderRef.current;
+		if (!placeholderEl) return;
+
+		const handleEnterKeyDown = (event: KeyboardEvent) => {
+			if (event.key === 'Enter') {
+				onChange((isOpen: boolean) => !isOpen);
+			}
+		};
+		placeholderEl.addEventListener('keydown', handleEnterKeyDown);
+
+		return () => {
+			placeholderEl.removeEventListener('keydown', handleEnterKeyDown);
+		};
+	}, []);
+};
+</file>
+
+<file path="src/components/select/hooks/useOutsideClickClose.ts">
+import type { RefObject} from 'react';
+import { useEffect, useRef } from 'react';
+
+type UseOutsideClickClose = {
+	isOpen: boolean;
+	onChange: (newValue: boolean) => void;
+	onClose?: () => void;
+	rootRef: React.RefObject<HTMLDivElement>;
+};
+
+export const useOutsideClickClose = <T extends HTMLElement>({
+	isOpen,
+	rootRef,
+	onClose,
+	onChange,
+}: UseOutsideClickClose): RefObject<T> => {
+	const optionRef = useRef<HTMLElement>(null);
+
+	useEffect(() => {
+		const handleClick = (event: MouseEvent) => {
+			const { target } = event;
+			if (
+				target instanceof Node &&
+				!rootRef.current?.contains(target) &&
+				!optionRef.current?.contains(target)
+			) {
+				if (isOpen) {
+					onClose?.();
+				}
+				onChange?.(false);
+			}
+		};
+
+		window.addEventListener('click', handleClick);
+
+		return () => {
+			window.removeEventListener('click', handleClick);
+		};
+	}, [onClose, onChange, isOpen]);
+
+	return optionRef as RefObject<T>;
+};
+</file>
+
+<file path="src/components/select/index.tsx">
+export { Select } from './Select';
+</file>
+
+<file path="src/components/select/Option.tsx">
+import clsx from 'clsx';
+import { useRef } from 'react';
+import type { MouseEventHandler } from 'react';
+
+import { Text } from 'components/text';
+import type { OptionType } from 'src/constants/articleProps';
+
+import { isFontFamilyClass } from './helpers/isFontFamilyClass';
+import { useEnterOptionSubmit } from './hooks/useEnterOptionSubmit';
+import styles from './Select.module.scss';
+
+type OptionProps = {
+	option: OptionType;
+	onClick: (value: OptionType['value']) => void;
+};
+
+export const Option = (props: OptionProps) => {
+	const {
+		option: { value, title, optionClassName, className },
+		onClick,
+	} = props;
+	const optionRef = useRef<HTMLLIElement>(null);
+
+	const handleClick =
+		(clickedValue: OptionType['value']): MouseEventHandler<HTMLLIElement> =>
+		() => {
+			onClick(clickedValue);
+		};
+
+	useEnterOptionSubmit({
+		optionRef,
+		value,
+		onClick,
+	});
+
+	return (
+		<li
+			className={clsx(styles.option, styles[optionClassName || ''])}
+			value={value}
+			onClick={handleClick(value)}
+			tabIndex={0}
+			data-testid={`select-option-${value}`}
+			ref={optionRef}>
+			<Text family={isFontFamilyClass(className) ? className : undefined}>
+				{title}
+			</Text>
+		</li>
+	);
+};
+</file>
+
+<file path="src/components/select/Select.module.scss">
+.selectWrapper {
+  position: relative;
+}
+
+.arrow {
+  position: absolute;
+  top: 50%;
+  right: 6px;
+  margin-top: -12px;
+  transition: transform 0.2s ease-in-out, margin-top 0.2s ease-in-out;
+}
+
+.placeholder {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  box-sizing: border-box;
+  width: 100%;
+  height: 50px;
+  padding: 15px 17px;
+  background: rgb(255 255 255);
+  outline: 1px solid #000000;
+  cursor: pointer;
+}
+
+.placeholder[data-selected="true"] {
+  color: rgb(0 0 0);
+}
+
+.selectWrapper[data-is-active="true"] .arrow {
+  margin-top: -14px;
+  transform: rotate(180deg);
+}
+
+.selectWrapper[data-is-active="true"] .placeholder {
+  outline: 3px solid #000000;
+}
+
+.selectWrapper:not([data-is-active="true"])
+  .placeholder:not([data-status="invalid"]):hover {
+  outline: 3px solid #000000;
+}
+
+.select {
+  position: absolute;
+  z-index: 10;
+  display: grid;
+  box-sizing: border-box;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  background-color: rgb(255 255 255 / 100%);
+  border-top: none;
+  outline: 3px solid #000000;
+}
+
+.option {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  height: 30px;
+  padding: 5px;
+  padding: 15px 17px;
+  background-color: rgb(255 255 255 / 100%);
+  border: 1px;
+  cursor: pointer;
+}
+
+.option[aria-selected="true"] {
+  background-color: rgb(0 0 0 / 5%);
+}
+
+.option:hover {
+  background: var(--grey, #c4c4c4);
+}
+
+@mixin option-color-before {
+  content: "";
+  width: 35px;
+  height: 35px;
+  margin-right: 10px;
+}
+
+.option-black::before {
+  @include option-color-before();
+  background-color: #000000;
+}
+
+@mixin option-color-after {
+  content: "";
+  position: absolute;
+  left: 26px;
+  width: 17px;
+  height: 17px;
+  border-radius: 100%;
+}
+
+.option-black[data-selected="true"]::after {
+  @include option-color-after();
+  background-color: #ffffff;
+}
+
+.option-white::before {
+  @include option-color-before();
+  box-sizing: border-box;
+  background-color: #ffffff;
+  border: 1px solid #000000;
+}
+
+.option-white[data-selected="true"]::after {
+  @include option-color-after();
+  background-color: #000000;
+}
+
+.option-gray::before {
+  @include option-color-before();
+  background-color: #c4c4c4;
+}
+
+.option-gray[data-selected="true"]::after {
+  @include option-color-after();
+  background-color: #ffffff;
+}
+
+.option-pink::before {
+  @include option-color-before();
+  background-color: #feafe8;
+}
+
+.option-pink[data-selected="true"]::after {
+  @include option-color-after();
+  background-color: #ffffff;
+}
+
+.option-fuchsia::before {
+  @include option-color-before();
+  background-color: #fd24af;
+}
+
+.option-fuchsia[data-selected="true"]::after {
+  @include option-color-after();
+  background-color: #ffffff;
+}
+
+.option-yellow::before {
+  @include option-color-before();
+  background-color: #ffc802;
+}
+
+.option-yellow[data-selected="true"]::after {
+  @include option-color-after();
+  background-color: #ffffff;
+}
+
+.option-green::before {
+  @include option-color-before();
+  background-color: #80d994;
+}
+
+.option-green[data-selected="true"]::after {
+  @include option-color-after();
+  background-color: #ffffff;
+}
+
+.option-blue::before {
+  @include option-color-before();
+  background-color: #6fc1fd;
+}
+
+.option-blue[data-selected="true"]::after {
+  @include option-color-after();
+  background-color: #ffffff;
+}
+
+.option-purple::before {
+  @include option-color-before();
+  background-color: #5f0dee;
+}
+
+.option-purple[data-selected="true"]::after {
+  @include option-color-after();
+  background-color: #ffffff;
+}
+
+@mixin option-width-before {
+  content: "";
+  width: 25px;
+  height: 25px;
+  margin-right: 10px;
+}
+
+.option-wide::before {
+  @include option-width-before();
+  background-image: url("./../../images/wide.svg");
+}
+
+.option-narrow::before {
+  @include option-width-before();
+  background-image: url("./../../images/narrow.svg");
+}
+</file>
+
+<file path="src/components/select/Select.stories.tsx">
+import type { Meta, StoryObj } from '@storybook/react';
+import { useState } from 'react';
+
+import { Select } from './Select';
+
+const meta: Meta<typeof Select> = {
+	component: Select,
+};
+
+export default meta;
+type Story = StoryObj<typeof Select>;
+
+export const SelectStory: Story = {
+	render: () => {
+		const options = [
+			{ title: '1 опция', value: '1 опция', className: '' },
+			{ title: '2 опция', value: '2 опция', className: '' },
+			{ title: '3 опция', value: '3 опция', className: '' },
+			{ title: '4 опция', value: '4 опция', className: '' },
+		];
+		const [selected, setSelected] = useState(options[0]);
+
+		return (
+			<>
+				<Select
+					selected={selected}
+					onChange={setSelected}
+					options={options}
+					title='Название радиогруппы'
+				/>
+			</>
+		);
+	},
+};
+</file>
+
+<file path="src/components/select/Select.tsx">
+import clsx from 'clsx';
+import type { MouseEventHandler } from 'react';
+import { useRef, useState } from 'react';
+
+import { Spacing } from 'components/spacing';
+import { Text } from 'components/text';
+import type { OptionType } from 'src/constants/articleProps';
+import arrowDown from 'src/images/arrow-down.svg';
+
+import { isFontFamilyClass } from './helpers/isFontFamilyClass';
+import { useEnterSubmit } from './hooks/useEnterSubmit';
+import { useOutsideClickClose } from './hooks/useOutsideClickClose';
+import { Option } from './Option';
+import styles from './Select.module.scss';
+
+type SelectProps = {
+	selected: OptionType | null;
+	options: OptionType[];
+	placeholder?: string;
+	onChange?: (selected: OptionType) => void;
+	onClose?: () => void;
+	title?: string;
+};
+
+export const Select = (props: SelectProps) => {
+	const { options, placeholder, selected, onChange, onClose, title } = props;
+	const [isOpen, setIsOpen] = useState<boolean>(false);
+	const rootRef = useRef<HTMLDivElement>(null);
+	const placeholderRef = useRef<HTMLDivElement>(null);
+
+	const optionsRef = useOutsideClickClose<HTMLUListElement>({
+		isOpen,
+		rootRef,
+		onClose,
+		onChange: setIsOpen,
+	});
+
+	useEnterSubmit({
+		placeholderRef,
+		onChange: setIsOpen,
+	});
+
+	const handleOptionClick = (option: OptionType) => {
+		onChange?.(option);
+		setIsOpen(false);
+	};
+	const handlePlaceHolderClick: MouseEventHandler<HTMLDivElement> = () => {
+		setIsOpen((isOpen) => !isOpen);
+	};
+
+	return (
+		<div>
+			{title && (
+				<>
+					<Text size={12} weight={800} uppercase>
+						{title}
+					</Text>
+					<Spacing size={4} />
+				</>
+			)}
+			<div
+				className={styles.selectWrapper}
+				ref={rootRef}
+				data-is-active={isOpen}
+				data-testid='selectWrapper'>
+				<img
+					src={arrowDown}
+					alt='иконка стрелочки'
+					className={clsx(styles.arrow, { [styles.arrow_open]: isOpen })}
+				/>
+				<div
+					className={clsx(
+						styles.placeholder,
+						styles[selected?.optionClassName || '']
+					)}
+					data-status={status}
+					data-selected={!!selected?.value}
+					onClick={handlePlaceHolderClick}
+					role='button'
+					tabIndex={0}
+					ref={placeholderRef}>
+					<Text
+						family={
+							isFontFamilyClass(selected?.className)
+								? selected?.className
+								: undefined
+						}>
+						{selected?.title || placeholder}
+					</Text>
+				</div>
+				{isOpen && (
+					<ul
+						className={styles.select}
+						data-testid='selectDropdown'
+						ref={optionsRef}>
+						{options
+							.filter((option) => selected?.value !== option.value)
+							.map((option) => (
+								<Option
+									key={option.value}
+									option={option}
+									onClick={() => handleOptionClick(option)}
+								/>
+							))}
+					</ul>
+				)}
+			</div>
+		</div>
+	);
+};
+</file>
+
+<file path="src/components/separator/index.module.scss">
+.separator {
+	width: 100%;
+	height: 1px;
+	background: #d7d7d7;
+}
+</file>
+
+<file path="src/components/separator/index.tsx">
+export { Separator } from './Separator';
+</file>
+
+<file path="src/components/separator/Separator.stories.tsx">
+import type { Meta, StoryObj } from '@storybook/react';
+
+import { Separator } from './Separator';
+
+const meta: Meta<typeof Separator> = {
+	component: Separator,
+};
+
+export default meta;
+type Story = StoryObj<typeof Separator>;
+
+export const SelectStory: Story = {
+	render: () => {
+		return <Separator />;
+	},
+};
+</file>
+
+<file path="src/components/separator/Separator.tsx">
+import styles from './index.module.scss';
+
+export const Separator = () => {
+	return <div className={styles.separator}></div>;
+};
+</file>
+
+<file path="src/components/spacing/index.module.scss">
+.spacing {
+  width: 100%;
+}
+
+.spacing4 {
+  height: 4px;
+}
+
+.spacing18 {
+  height: 18px;
+}
+
+.spacing30 {
+  height: 30px;
+}
+
+.spacing50 {
+  height: 50px;
+}
+
+.spacing72 {
+  height: 50px;
+}
+</file>
+
+<file path="src/components/spacing/index.tsx">
+export { Spacing } from './Spacing';
+</file>
+
+<file path="src/components/spacing/Spacing.tsx">
+import { clsx } from 'clsx';
+
+import styles from './index.module.scss';
+
+export type SpaceSize = 4 | 18 | 30 | 50 | 72;
+
+export const Spacing = ({ size }: { size: SpaceSize }) => {
+	const className = `spacing${size}`;
+	return <div className={clsx([styles.spacing, styles[className]])}></div>;
+};
+</file>
+
+<file path="src/components/story-decorator/index.tsx">
+export { StoryDecorator } from './StoryDecorator';
+</file>
+
+<file path="src/components/story-decorator/StoryDecorator.module.scss">
+@import url("../../styles/index.scss");
+
+.storybookContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 50px;
+}
+</file>
+
+<file path="src/components/story-decorator/StoryDecorator.tsx">
+import type { Decorator } from '@storybook/react';
+
+import styles from './StoryDecorator.module.scss';
+
+export const StoryDecorator: Decorator = (Story) => (
+	<div className={styles.storybookContainer}>
+		<Story />
+	</div>
+);
+</file>
+
+<file path="src/components/text/index.module.scss">
+@mixin typography($size: 18, $weight: 400, $family: 'Open Sans') {
+	color: #000000;
+	font-weight: $weight;
+	font-size: $size;
+	font-family: $family;
+	line-height: normal;
+	letter-spacing: 0;
+}
+
+.text {
+	@include typography(18, 400, 'Open Sans');
+}
+
+.open-sans {
+	font-family: 'Open Sans', sans-serif;
+}
+
+.ubuntu {
+	font-family: 'Ubuntu', sans-serif;
+}
+
+.cormorant-garamond {
+	font-family: 'Cormorant Garamond', sans-serif;
+}
+
+.days-one {
+	font-family: 'Days One', sans-serif;
+}
+
+.merriweather {
+	font-family: 'Merriweather', sans-serif;
+}
+
+.left {
+	text-align: left;
+}
+
+.center {
+	text-align: center;
+}
+
+.uppercase {
+	text-transform: uppercase;
+}
+
+.size12 {
+	font-size: 12px;
+}
+
+.size18 {
+	font-size: 18px;
+}
+
+.size22 {
+	font-size: 22px;
+}
+
+.size25 {
+	font-size: 25px;
+}
+
+.size31 {
+	font-size: 31px;
+}
+
+.size45 {
+	font-size: 45px;
+}
+
+.weight400 {
+	font-weight: 400;
+}
+
+.weight800 {
+	font-weight: 800;
+}
+
+.normal {
+	font-style: normal;
+}
+
+.italic {
+	font-style: italic;
+}
+
+// для динамических типографий, используем константы, которые будут меняться
+.dynamic {
+	color: var(--font-color, #000000);
+	font-size: var(--font-size, 18px);
+	font-family: var(--font-family, 'Open Sans');
+}
+
+// для заголовка и подзаголовка рамер шрифта одинаковый, меняется только цвет и семейство шрифтов
+.dynamicLite {
+	color: var(--font-color, #000000);
+	font-family: var(--font-family, 'Open Sans');
+}
+</file>
+
+<file path="src/components/text/index.tsx">
+export { Text } from './Text';
+</file>
+
+<file path="src/components/text/Text.stories.tsx">
+import type { Meta, StoryObj } from '@storybook/react';
+
+import { Text } from './Text';
+
+const meta: Meta<typeof Text> = {
+	component: Text,
+};
+
+export default meta;
+type Story = StoryObj<typeof Text>;
+
+export const SelectStory: Story = {
+	argTypes: {
+		as: {
+			options: ['h1', 'h2', 'div', 'span'],
+			control: { type: 'select' },
+		},
+		dynamic: {
+			control: { type: 'boolean' },
+		},
+		size: {
+			options: [12, 18, 22, 25, 31, 45],
+			control: { type: 'select' },
+		},
+		weight: {
+			options: [400, 800],
+			control: { type: 'select' },
+		},
+		fontStyle: {
+			options: ['italic', 'normal'],
+			control: { type: 'select' },
+		},
+		uppercase: {
+			control: { type: 'boolean' },
+		},
+		align: {
+			options: ['center', 'left'],
+			control: { type: 'select' },
+		},
+		family: {
+			options: [
+				'open-sans',
+				'ubuntu',
+				'cormorant-garamond',
+				'days-one',
+				'merriweather',
+			],
+			control: { type: 'select' },
+		},
+	},
+	render: (args) => {
+		return (
+			<Text {...args}>
+				Lorem ipsum, dolor sit amet consectetur adipisicing elit. Animi, nulla.
+				Itaque laudantium quas repudiandae delectus voluptates fuga veritatis.
+				Necessitatibus omnis sequi repudiandae, porro est possimus ullam
+				inventore dolores rem molestiae.
+			</Text>
+		);
+	},
+};
+</file>
+
+<file path="src/components/text/Text.tsx">
+import clsx from 'clsx';
+import type { ElementType, ReactNode } from 'react';
+
+import type { FontFamiliesClasses } from 'src/constants/articleProps';
+
+import styles from './index.module.scss';
+
+type Text = {
+	/** Сам текст для вывода */
+	children: ReactNode;
+	/** Тэг которым отрендерить текст */
+	as?: ElementType;
+	/** Булевая пропса, должен ли текст меняться в зависимости от конфига */
+	dynamic?: boolean;
+	/** Размер шрифта */
+	size?: 12 | 18 | 22 | 25 | 31 | 45;
+	/** Вес шрифта */
+	weight?: 400 | 800;
+	/** Стиль шрифта */
+	fontStyle?: 'italic' | 'normal';
+	/** Булевая пропса, отвечающая должен ли текст быть в верхнем регистре */
+	uppercase?: boolean;
+	/** Выравнивание текста */
+	align?: 'center' | 'left';
+	/** font-family текста */
+	family?: FontFamiliesClasses;
+	/** Булевая пропса, делает динамическим только семью шрифтов и цвет */
+	dynamicLite?: boolean;
+};
+
+export const Text = ({
+	children,
+	as: Tag = 'div',
+	size = 18,
+	dynamic = false,
+	weight = 400,
+	fontStyle = 'normal',
+	uppercase = false,
+	align = 'left',
+	family = 'open-sans',
+	dynamicLite = false,
+}: Text) => {
+	const className = clsx(
+		styles.text,
+		styles[`size${size}`],
+		{ [styles.dynamic]: dynamic },
+		styles[`weight${weight}`],
+		styles[`${fontStyle}`],
+		{ [styles.uppercase]: uppercase },
+		styles[`${align}`],
+		styles[`${family}`],
+		{ [styles.dynamicLite]: dynamicLite }
+	);
+	return <Tag className={className}>{children}</Tag>;
+};
+</file>
+
+<file path="src/constants/articleProps.ts">
+export const fontFamilyClasses = [
+	'open-sans',
+	'ubuntu',
+	'cormorant-garamond',
+	'days-one',
+	'merriweather',
+] as const;
+
+export type FontFamiliesClasses = (typeof fontFamilyClasses)[number];
+
+export type OptionType = {
+	title: string;
+	value: string;
+	className: string;
+	optionClassName?: string;
+};
+
+export const fontFamilyOptions: OptionType[] & {
+	optionClassName?: FontFamiliesClasses;
+} = [
+	{ title: 'Open Sans', value: 'Open Sans', className: fontFamilyClasses[0] },
+	{ title: 'Ubuntu', value: 'Ubuntu', className: fontFamilyClasses[1] },
+	{
+		title: 'Cormorant Garamond',
+		value: 'Cormorant Garamond',
+		className: fontFamilyClasses[2],
+	},
+	{ title: 'Days One', value: 'Days One', className: fontFamilyClasses[3] },
+	{
+		title: 'Merriweather',
+		value: 'Merriweather',
+		className: fontFamilyClasses[4],
+	},
+];
+
+export const fontColors: OptionType[] = [
+	{
+		title: 'Черный',
+		value: '#000000',
+		className: 'font-black',
+		optionClassName: 'option-black',
+	},
+	{
+		title: 'Белый',
+		value: '#FFFFFF',
+		className: 'font-white',
+		optionClassName: 'option-white',
+	},
+	{
+		title: 'Серый',
+		value: '#C4C4C4',
+		className: 'font-gray',
+		optionClassName: 'option-gray',
+	},
+	{
+		title: 'Розовый',
+		value: '#FEAFE8',
+		className: 'font-pink',
+		optionClassName: 'option-pink',
+	},
+	{
+		title: 'Ярко-розовый',
+		value: '#FD24AF',
+		className: 'font-fuchsia',
+		optionClassName: 'option-fuchsia',
+	},
+	{
+		title: 'Жёлтый',
+		value: '#FFC802',
+		className: 'font-yellow',
+		optionClassName: 'option-yellow',
+	},
+	{
+		title: 'Зелёный',
+		value: '#80D994',
+		className: 'font-green',
+		optionClassName: 'option-green',
+	},
+	{
+		title: 'Голубой',
+		value: '#6FC1FD',
+		className: 'font-blue',
+		optionClassName: 'option-blue',
+	},
+	{
+		title: 'Фиолетовый',
+		value: '#5F0DEE',
+		className: 'font-purple',
+		optionClassName: 'option-purple',
+	},
+];
+
+export const backgroundColors: OptionType[] = [
+	{
+		title: 'Белый',
+		value: '#FFFFFF',
+		className: 'bg-white',
+		optionClassName: 'option-white',
+	},
+	{
+		title: 'Черный',
+		value: '#000000',
+		className: 'bg-black',
+		optionClassName: 'option-black',
+	},
+	{
+		title: 'Серый',
+		value: '#C4C4C4',
+		className: 'bg-gray',
+		optionClassName: 'option-gray',
+	},
+	{
+		title: 'Розовый',
+		value: '#FEAFE8',
+		className: 'bg-pink',
+		optionClassName: 'option-pink',
+	},
+	{
+		title: 'Ярко-розовый',
+		value: '#FD24AF',
+		className: 'bg-fuchsia',
+		optionClassName: 'option-fuchsia',
+	},
+	{
+		title: 'Жёлтый',
+		value: '#FFC802',
+		className: 'bg-yellow',
+		optionClassName: 'option-yellow',
+	},
+	{
+		title: 'Зелёный',
+		value: '#80D994',
+		className: 'bg-green',
+		optionClassName: 'option-green',
+	},
+	{
+		title: 'Голубой',
+		value: '#6FC1FD',
+		className: 'bg-blue',
+		optionClassName: 'option-blue',
+	},
+	{
+		title: 'Фиолетовый',
+		value: '#5F0DEE',
+		className: 'bg-purple',
+		optionClassName: 'option-purple',
+	},
+];
+
+export const contentWidthArr: OptionType[] = [
+	{
+		title: 'Широкий',
+		value: '1394px',
+		className: 'width-wide',
+		optionClassName: 'option-wide',
+	},
+	{
+		title: 'Узкий',
+		value: '948px',
+		className: 'width-narrow',
+		optionClassName: 'option-narrow',
+	},
+];
+
+export const fontSizeOptions: OptionType[] = [
+	{ title: '18px', value: '18px', className: 'font-size-18' },
+	{ title: '25px', value: '25px', className: 'font-size-25' },
+	{ title: '38px', value: '38px', className: 'font-size-38' },
+];
+
+export const defaultArticleState = {
+	fontFamilyOption: fontFamilyOptions[0],
+	fontColor: fontColors[0],
+	backgroundColor: backgroundColors[0],
+	contentWidth: contentWidthArr[0],
+	fontSizeOption: fontSizeOptions[0],
+};
+
+export type ArticleStateType = typeof defaultArticleState;
+</file>
+
+<file path="src/fonts/font-files/Cormorant_Garamond/OFL.txt">
+Copyright 2015 the Cormorant Project Authors (github.com/CatharsisFonts/Cormorant)
+
+This Font Software is licensed under the SIL Open Font License, Version 1.1.
+This license is copied below, and is also available with a FAQ at:
+http://scripts.sil.org/OFL
+
+
+-----------------------------------------------------------
+SIL OPEN FONT LICENSE Version 1.1 - 26 February 2007
+-----------------------------------------------------------
+
+PREAMBLE
+The goals of the Open Font License (OFL) are to stimulate worldwide
+development of collaborative font projects, to support the font creation
+efforts of academic and linguistic communities, and to provide a free and
+open framework in which fonts may be shared and improved in partnership
+with others.
+
+The OFL allows the licensed fonts to be used, studied, modified and
+redistributed freely as long as they are not sold by themselves. The
+fonts, including any derivative works, can be bundled, embedded, 
+redistributed and/or sold with any software provided that any reserved
+names are not used by derivative works. The fonts and derivatives,
+however, cannot be released under any other type of license. The
+requirement for fonts to remain under this license does not apply
+to any document created using the fonts or their derivatives.
+
+DEFINITIONS
+"Font Software" refers to the set of files released by the Copyright
+Holder(s) under this license and clearly marked as such. This may
+include source files, build scripts and documentation.
+
+"Reserved Font Name" refers to any names specified as such after the
+copyright statement(s).
+
+"Original Version" refers to the collection of Font Software components as
+distributed by the Copyright Holder(s).
+
+"Modified Version" refers to any derivative made by adding to, deleting,
+or substituting -- in part or in whole -- any of the components of the
+Original Version, by changing formats or by porting the Font Software to a
+new environment.
+
+"Author" refers to any designer, engineer, programmer, technical
+writer or other person who contributed to the Font Software.
+
+PERMISSION & CONDITIONS
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of the Font Software, to use, study, copy, merge, embed, modify,
+redistribute, and sell modified and unmodified copies of the Font
+Software, subject to the following conditions:
+
+1) Neither the Font Software nor any of its individual components,
+in Original or Modified Versions, may be sold by itself.
+
+2) Original or Modified Versions of the Font Software may be bundled,
+redistributed and/or sold with any software, provided that each copy
+contains the above copyright notice and this license. These can be
+included either as stand-alone text files, human-readable headers or
+in the appropriate machine-readable metadata fields within text or
+binary files as long as those fields can be easily viewed by the user.
+
+3) No Modified Version of the Font Software may use the Reserved Font
+Name(s) unless explicit written permission is granted by the corresponding
+Copyright Holder. This restriction only applies to the primary font name as
+presented to the users.
+
+4) The name(s) of the Copyright Holder(s) or the Author(s) of the Font
+Software shall not be used to promote, endorse or advertise any
+Modified Version, except to acknowledge the contribution(s) of the
+Copyright Holder(s) and the Author(s) or with their explicit written
+permission.
+
+5) The Font Software, modified or unmodified, in part or in whole,
+must be distributed entirely under this license, and must not be
+distributed under any other license. The requirement for fonts to
+remain under this license does not apply to any document created
+using the Font Software.
+
+TERMINATION
+This license becomes null and void if any of the above conditions are
+not met.
+
+DISCLAIMER
+THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO ANY WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT
+OF COPYRIGHT, PATENT, TRADEMARK, OR OTHER RIGHT. IN NO EVENT SHALL THE
+COPYRIGHT HOLDER BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+INCLUDING ANY GENERAL, SPECIAL, INDIRECT, INCIDENTAL, OR CONSEQUENTIAL
+DAMAGES, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+FROM, OUT OF THE USE OR INABILITY TO USE THE FONT SOFTWARE OR FROM
+OTHER DEALINGS IN THE FONT SOFTWARE.
+</file>
+
+<file path="src/fonts/font-files/Days_One/OFL.txt">
+Copyright (c) 2011, Jovanny Lemonad (http://www.jovanny.ru)
+with Reserved Font Name "Days One"
+
+This Font Software is licensed under the SIL Open Font License, Version 1.1.
+This license is copied below, and is also available with a FAQ at:
+http://scripts.sil.org/OFL
+
+
+-----------------------------------------------------------
+SIL OPEN FONT LICENSE Version 1.1 - 26 February 2007
+-----------------------------------------------------------
+
+PREAMBLE
+The goals of the Open Font License (OFL) are to stimulate worldwide
+development of collaborative font projects, to support the font creation
+efforts of academic and linguistic communities, and to provide a free and
+open framework in which fonts may be shared and improved in partnership
+with others.
+
+The OFL allows the licensed fonts to be used, studied, modified and
+redistributed freely as long as they are not sold by themselves. The
+fonts, including any derivative works, can be bundled, embedded, 
+redistributed and/or sold with any software provided that any reserved
+names are not used by derivative works. The fonts and derivatives,
+however, cannot be released under any other type of license. The
+requirement for fonts to remain under this license does not apply
+to any document created using the fonts or their derivatives.
+
+DEFINITIONS
+"Font Software" refers to the set of files released by the Copyright
+Holder(s) under this license and clearly marked as such. This may
+include source files, build scripts and documentation.
+
+"Reserved Font Name" refers to any names specified as such after the
+copyright statement(s).
+
+"Original Version" refers to the collection of Font Software components as
+distributed by the Copyright Holder(s).
+
+"Modified Version" refers to any derivative made by adding to, deleting,
+or substituting -- in part or in whole -- any of the components of the
+Original Version, by changing formats or by porting the Font Software to a
+new environment.
+
+"Author" refers to any designer, engineer, programmer, technical
+writer or other person who contributed to the Font Software.
+
+PERMISSION & CONDITIONS
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of the Font Software, to use, study, copy, merge, embed, modify,
+redistribute, and sell modified and unmodified copies of the Font
+Software, subject to the following conditions:
+
+1) Neither the Font Software nor any of its individual components,
+in Original or Modified Versions, may be sold by itself.
+
+2) Original or Modified Versions of the Font Software may be bundled,
+redistributed and/or sold with any software, provided that each copy
+contains the above copyright notice and this license. These can be
+included either as stand-alone text files, human-readable headers or
+in the appropriate machine-readable metadata fields within text or
+binary files as long as those fields can be easily viewed by the user.
+
+3) No Modified Version of the Font Software may use the Reserved Font
+Name(s) unless explicit written permission is granted by the corresponding
+Copyright Holder. This restriction only applies to the primary font name as
+presented to the users.
+
+4) The name(s) of the Copyright Holder(s) or the Author(s) of the Font
+Software shall not be used to promote, endorse or advertise any
+Modified Version, except to acknowledge the contribution(s) of the
+Copyright Holder(s) and the Author(s) or with their explicit written
+permission.
+
+5) The Font Software, modified or unmodified, in part or in whole,
+must be distributed entirely under this license, and must not be
+distributed under any other license. The requirement for fonts to
+remain under this license does not apply to any document created
+using the Font Software.
+
+TERMINATION
+This license becomes null and void if any of the above conditions are
+not met.
+
+DISCLAIMER
+THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO ANY WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT
+OF COPYRIGHT, PATENT, TRADEMARK, OR OTHER RIGHT. IN NO EVENT SHALL THE
+COPYRIGHT HOLDER BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+INCLUDING ANY GENERAL, SPECIAL, INDIRECT, INCIDENTAL, OR CONSEQUENTIAL
+DAMAGES, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+FROM, OUT OF THE USE OR INABILITY TO USE THE FONT SOFTWARE OR FROM
+OTHER DEALINGS IN THE FONT SOFTWARE.
+</file>
+
+<file path="src/fonts/font-files/Merriweather/OFL.txt">
+Copyright 2016 The Merriweather Project Authors (https://github.com/EbenSorkin/Merriweather), with Reserved Font Name "Merriweather".
+
+This Font Software is licensed under the SIL Open Font License, Version 1.1.
+This license is copied below, and is also available with a FAQ at:
+http://scripts.sil.org/OFL
+
+
+-----------------------------------------------------------
+SIL OPEN FONT LICENSE Version 1.1 - 26 February 2007
+-----------------------------------------------------------
+
+PREAMBLE
+The goals of the Open Font License (OFL) are to stimulate worldwide
+development of collaborative font projects, to support the font creation
+efforts of academic and linguistic communities, and to provide a free and
+open framework in which fonts may be shared and improved in partnership
+with others.
+
+The OFL allows the licensed fonts to be used, studied, modified and
+redistributed freely as long as they are not sold by themselves. The
+fonts, including any derivative works, can be bundled, embedded, 
+redistributed and/or sold with any software provided that any reserved
+names are not used by derivative works. The fonts and derivatives,
+however, cannot be released under any other type of license. The
+requirement for fonts to remain under this license does not apply
+to any document created using the fonts or their derivatives.
+
+DEFINITIONS
+"Font Software" refers to the set of files released by the Copyright
+Holder(s) under this license and clearly marked as such. This may
+include source files, build scripts and documentation.
+
+"Reserved Font Name" refers to any names specified as such after the
+copyright statement(s).
+
+"Original Version" refers to the collection of Font Software components as
+distributed by the Copyright Holder(s).
+
+"Modified Version" refers to any derivative made by adding to, deleting,
+or substituting -- in part or in whole -- any of the components of the
+Original Version, by changing formats or by porting the Font Software to a
+new environment.
+
+"Author" refers to any designer, engineer, programmer, technical
+writer or other person who contributed to the Font Software.
+
+PERMISSION & CONDITIONS
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of the Font Software, to use, study, copy, merge, embed, modify,
+redistribute, and sell modified and unmodified copies of the Font
+Software, subject to the following conditions:
+
+1) Neither the Font Software nor any of its individual components,
+in Original or Modified Versions, may be sold by itself.
+
+2) Original or Modified Versions of the Font Software may be bundled,
+redistributed and/or sold with any software, provided that each copy
+contains the above copyright notice and this license. These can be
+included either as stand-alone text files, human-readable headers or
+in the appropriate machine-readable metadata fields within text or
+binary files as long as those fields can be easily viewed by the user.
+
+3) No Modified Version of the Font Software may use the Reserved Font
+Name(s) unless explicit written permission is granted by the corresponding
+Copyright Holder. This restriction only applies to the primary font name as
+presented to the users.
+
+4) The name(s) of the Copyright Holder(s) or the Author(s) of the Font
+Software shall not be used to promote, endorse or advertise any
+Modified Version, except to acknowledge the contribution(s) of the
+Copyright Holder(s) and the Author(s) or with their explicit written
+permission.
+
+5) The Font Software, modified or unmodified, in part or in whole,
+must be distributed entirely under this license, and must not be
+distributed under any other license. The requirement for fonts to
+remain under this license does not apply to any document created
+using the Font Software.
+
+TERMINATION
+This license becomes null and void if any of the above conditions are
+not met.
+
+DISCLAIMER
+THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO ANY WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT
+OF COPYRIGHT, PATENT, TRADEMARK, OR OTHER RIGHT. IN NO EVENT SHALL THE
+COPYRIGHT HOLDER BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+INCLUDING ANY GENERAL, SPECIAL, INDIRECT, INCIDENTAL, OR CONSEQUENTIAL
+DAMAGES, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+FROM, OUT OF THE USE OR INABILITY TO USE THE FONT SOFTWARE OR FROM
+OTHER DEALINGS IN THE FONT SOFTWARE.
+</file>
+
+<file path="src/fonts/font-files/Open_Sans/OFL.txt">
+Copyright 2020 The Open Sans Project Authors (https://github.com/googlefonts/opensans)
+
+This Font Software is licensed under the SIL Open Font License, Version 1.1.
+This license is copied below, and is also available with a FAQ at:
+http://scripts.sil.org/OFL
+
+
+-----------------------------------------------------------
+SIL OPEN FONT LICENSE Version 1.1 - 26 February 2007
+-----------------------------------------------------------
+
+PREAMBLE
+The goals of the Open Font License (OFL) are to stimulate worldwide
+development of collaborative font projects, to support the font creation
+efforts of academic and linguistic communities, and to provide a free and
+open framework in which fonts may be shared and improved in partnership
+with others.
+
+The OFL allows the licensed fonts to be used, studied, modified and
+redistributed freely as long as they are not sold by themselves. The
+fonts, including any derivative works, can be bundled, embedded, 
+redistributed and/or sold with any software provided that any reserved
+names are not used by derivative works. The fonts and derivatives,
+however, cannot be released under any other type of license. The
+requirement for fonts to remain under this license does not apply
+to any document created using the fonts or their derivatives.
+
+DEFINITIONS
+"Font Software" refers to the set of files released by the Copyright
+Holder(s) under this license and clearly marked as such. This may
+include source files, build scripts and documentation.
+
+"Reserved Font Name" refers to any names specified as such after the
+copyright statement(s).
+
+"Original Version" refers to the collection of Font Software components as
+distributed by the Copyright Holder(s).
+
+"Modified Version" refers to any derivative made by adding to, deleting,
+or substituting -- in part or in whole -- any of the components of the
+Original Version, by changing formats or by porting the Font Software to a
+new environment.
+
+"Author" refers to any designer, engineer, programmer, technical
+writer or other person who contributed to the Font Software.
+
+PERMISSION & CONDITIONS
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of the Font Software, to use, study, copy, merge, embed, modify,
+redistribute, and sell modified and unmodified copies of the Font
+Software, subject to the following conditions:
+
+1) Neither the Font Software nor any of its individual components,
+in Original or Modified Versions, may be sold by itself.
+
+2) Original or Modified Versions of the Font Software may be bundled,
+redistributed and/or sold with any software, provided that each copy
+contains the above copyright notice and this license. These can be
+included either as stand-alone text files, human-readable headers or
+in the appropriate machine-readable metadata fields within text or
+binary files as long as those fields can be easily viewed by the user.
+
+3) No Modified Version of the Font Software may use the Reserved Font
+Name(s) unless explicit written permission is granted by the corresponding
+Copyright Holder. This restriction only applies to the primary font name as
+presented to the users.
+
+4) The name(s) of the Copyright Holder(s) or the Author(s) of the Font
+Software shall not be used to promote, endorse or advertise any
+Modified Version, except to acknowledge the contribution(s) of the
+Copyright Holder(s) and the Author(s) or with their explicit written
+permission.
+
+5) The Font Software, modified or unmodified, in part or in whole,
+must be distributed entirely under this license, and must not be
+distributed under any other license. The requirement for fonts to
+remain under this license does not apply to any document created
+using the Font Software.
+
+TERMINATION
+This license becomes null and void if any of the above conditions are
+not met.
+
+DISCLAIMER
+THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO ANY WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT
+OF COPYRIGHT, PATENT, TRADEMARK, OR OTHER RIGHT. IN NO EVENT SHALL THE
+COPYRIGHT HOLDER BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+INCLUDING ANY GENERAL, SPECIAL, INDIRECT, INCIDENTAL, OR CONSEQUENTIAL
+DAMAGES, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+FROM, OUT OF THE USE OR INABILITY TO USE THE FONT SOFTWARE OR FROM
+OTHER DEALINGS IN THE FONT SOFTWARE.
+</file>
+
+<file path="src/fonts/font-files/Open_Sans/README.txt">
+Open Sans Variable Font
+=======================
+
+This download contains Open Sans as both variable fonts and static fonts.
+
+Open Sans is a variable font with these axes:
+  wdth
+  wght
+
+This means all the styles are contained in these files:
+  Open_Sans/OpenSans-VariableFont_wdth,wght.ttf
+  Open_Sans/OpenSans-Italic-VariableFont_wdth,wght.ttf
+
+If your app fully supports variable fonts, you can now pick intermediate styles
+that aren’t available as static fonts. Not all apps support variable fonts, and
+in those cases you can use the static font files for Open Sans:
+  Open_Sans/static/OpenSans_Condensed-Light.ttf
+  Open_Sans/static/OpenSans_Condensed-Regular.ttf
+  Open_Sans/static/OpenSans_Condensed-Medium.ttf
+  Open_Sans/static/OpenSans_Condensed-SemiBold.ttf
+  Open_Sans/static/OpenSans_Condensed-Bold.ttf
+  Open_Sans/static/OpenSans_Condensed-ExtraBold.ttf
+  Open_Sans/static/OpenSans_SemiCondensed-Light.ttf
+  Open_Sans/static/OpenSans_SemiCondensed-Regular.ttf
+  Open_Sans/static/OpenSans_SemiCondensed-Medium.ttf
+  Open_Sans/static/OpenSans_SemiCondensed-SemiBold.ttf
+  Open_Sans/static/OpenSans_SemiCondensed-Bold.ttf
+  Open_Sans/static/OpenSans_SemiCondensed-ExtraBold.ttf
+  Open_Sans/static/OpenSans-Light.ttf
+  Open_Sans/static/OpenSans-Regular.ttf
+  Open_Sans/static/OpenSans-Medium.ttf
+  Open_Sans/static/OpenSans-SemiBold.ttf
+  Open_Sans/static/OpenSans-Bold.ttf
+  Open_Sans/static/OpenSans-ExtraBold.ttf
+  Open_Sans/static/OpenSans_Condensed-LightItalic.ttf
+  Open_Sans/static/OpenSans_Condensed-Italic.ttf
+  Open_Sans/static/OpenSans_Condensed-MediumItalic.ttf
+  Open_Sans/static/OpenSans_Condensed-SemiBoldItalic.ttf
+  Open_Sans/static/OpenSans_Condensed-BoldItalic.ttf
+  Open_Sans/static/OpenSans_Condensed-ExtraBoldItalic.ttf
+  Open_Sans/static/OpenSans_SemiCondensed-LightItalic.ttf
+  Open_Sans/static/OpenSans_SemiCondensed-Italic.ttf
+  Open_Sans/static/OpenSans_SemiCondensed-MediumItalic.ttf
+  Open_Sans/static/OpenSans_SemiCondensed-SemiBoldItalic.ttf
+  Open_Sans/static/OpenSans_SemiCondensed-BoldItalic.ttf
+  Open_Sans/static/OpenSans_SemiCondensed-ExtraBoldItalic.ttf
+  Open_Sans/static/OpenSans-LightItalic.ttf
+  Open_Sans/static/OpenSans-Italic.ttf
+  Open_Sans/static/OpenSans-MediumItalic.ttf
+  Open_Sans/static/OpenSans-SemiBoldItalic.ttf
+  Open_Sans/static/OpenSans-BoldItalic.ttf
+  Open_Sans/static/OpenSans-ExtraBoldItalic.ttf
+
+Get started
+-----------
+
+1. Install the font files you want to use
+
+2. Use your app's font picker to view the font family and all the
+available styles
+
+Learn more about variable fonts
+-------------------------------
+
+  https://developers.google.com/web/fundamentals/design-and-ux/typography/variable-fonts
+  https://variablefonts.typenetwork.com
+  https://medium.com/variable-fonts
+
+In desktop apps
+
+  https://theblog.adobe.com/can-variable-fonts-illustrator-cc
+  https://helpx.adobe.com/nz/photoshop/using/fonts.html#variable_fonts
+
+Online
+
+  https://developers.google.com/fonts/docs/getting_started
+  https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Fonts/Variable_Fonts_Guide
+  https://developer.microsoft.com/en-us/microsoft-edge/testdrive/demos/variable-fonts
+
+Installing fonts
+
+  MacOS: https://support.apple.com/en-us/HT201749
+  Linux: https://www.google.com/search?q=how+to+install+a+font+on+gnu%2Blinux
+  Windows: https://support.microsoft.com/en-us/help/314960/how-to-install-or-remove-a-font-in-windows
+
+Android Apps
+
+  https://developers.google.com/fonts/docs/android
+  https://developer.android.com/guide/topics/ui/look-and-feel/downloadable-fonts
+
+License
+-------
+Please read the full license text (OFL.txt) to understand the permissions,
+restrictions and requirements for usage, redistribution, and modification.
+
+You can use them in your products & projects – print or digital,
+commercial or otherwise.
+
+This isn't legal advice, please consider consulting a lawyer and see the full
+license for all details.
+</file>
+
+<file path="src/fonts/font-files/Ubuntu/UFL.txt">
+-------------------------------
+UBUNTU FONT LICENCE Version 1.0
+-------------------------------
+
+PREAMBLE
+This licence allows the licensed fonts to be used, studied, modified and
+redistributed freely. The fonts, including any derivative works, can be
+bundled, embedded, and redistributed provided the terms of this licence
+are met. The fonts and derivatives, however, cannot be released under
+any other licence. The requirement for fonts to remain under this
+licence does not require any document created using the fonts or their
+derivatives to be published under this licence, as long as the primary
+purpose of the document is not to be a vehicle for the distribution of
+the fonts.
+
+DEFINITIONS
+"Font Software" refers to the set of files released by the Copyright
+Holder(s) under this licence and clearly marked as such. This may
+include source files, build scripts and documentation.
+
+"Original Version" refers to the collection of Font Software components
+as received under this licence.
+
+"Modified Version" refers to any derivative made by adding to, deleting,
+or substituting -- in part or in whole -- any of the components of the
+Original Version, by changing formats or by porting the Font Software to
+a new environment.
+
+"Copyright Holder(s)" refers to all individuals and companies who have a
+copyright ownership of the Font Software.
+
+"Substantially Changed" refers to Modified Versions which can be easily
+identified as dissimilar to the Font Software by users of the Font
+Software comparing the Original Version with the Modified Version.
+
+To "Propagate" a work means to do anything with it that, without
+permission, would make you directly or secondarily liable for
+infringement under applicable copyright law, except executing it on a
+computer or modifying a private copy. Propagation includes copying,
+distribution (with or without modification and with or without charging
+a redistribution fee), making available to the public, and in some
+countries other activities as well.
+
+PERMISSION & CONDITIONS
+This licence does not grant any rights under trademark law and all such
+rights are reserved.
+
+Permission is hereby granted, free of charge, to any person obtaining a
+copy of the Font Software, to propagate the Font Software, subject to
+the below conditions:
+
+1) Each copy of the Font Software must contain the above copyright
+notice and this licence. These can be included either as stand-alone
+text files, human-readable headers or in the appropriate machine-
+readable metadata fields within text or binary files as long as those
+fields can be easily viewed by the user.
+
+2) The font name complies with the following:
+(a) The Original Version must retain its name, unmodified.
+(b) Modified Versions which are Substantially Changed must be renamed to
+avoid use of the name of the Original Version or similar names entirely.
+(c) Modified Versions which are not Substantially Changed must be
+renamed to both (i) retain the name of the Original Version and (ii) add
+additional naming elements to distinguish the Modified Version from the
+Original Version. The name of such Modified Versions must be the name of
+the Original Version, with "derivative X" where X represents the name of
+the new work, appended to that name.
+
+3) The name(s) of the Copyright Holder(s) and any contributor to the
+Font Software shall not be used to promote, endorse or advertise any
+Modified Version, except (i) as required by this licence, (ii) to
+acknowledge the contribution(s) of the Copyright Holder(s) or (iii) with
+their explicit written permission.
+
+4) The Font Software, modified or unmodified, in part or in whole, must
+be distributed entirely under this licence, and must not be distributed
+under any other licence. The requirement for fonts to remain under this
+licence does not affect any document created using the Font Software,
+except any version of the Font Software extracted from a document
+created using the Font Software may only be distributed under this
+licence.
+
+TERMINATION
+This licence becomes null and void if any of the above conditions are
+not met.
+
+DISCLAIMER
+THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO ANY WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF
+COPYRIGHT, PATENT, TRADEMARK, OR OTHER RIGHT. IN NO EVENT SHALL THE
+COPYRIGHT HOLDER BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+INCLUDING ANY GENERAL, SPECIAL, INDIRECT, INCIDENTAL, OR CONSEQUENTIAL
+DAMAGES, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+FROM, OUT OF THE USE OR INABILITY TO USE THE FONT SOFTWARE OR FROM OTHER
+DEALINGS IN THE FONT SOFTWARE.
+</file>
+
+<file path="src/fonts/font.scss">
+@font-face {
+    font-family: 'Open sans';
+    src: url('~fonts/font-files/Open_Sans/OpenSans-VariableFont_wdth\,wght.ttf') format('truetype');
+    font-weight: 400 800;
+}
+
+@font-face {
+    font-family: 'Open sans';
+    src: url('~fonts/font-files/Open_Sans/OpenSans-Italic-VariableFont_wdth\,wght.ttf') format('truetype');
+    font-weight: 400;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'Cormorant Garamond';
+    src: url('~fonts/font-files/Cormorant_Garamond/CormorantGaramond-Regular.ttf') format('truetype');
+    font-weight: 400;
+}
+
+@font-face {
+    font-family: 'Cormorant Garamond';
+    src: url('~fonts/font-files/Cormorant_Garamond/CormorantGaramond-Bold.ttf') format('truetype');
+    font-weight: 800;
+}
+
+@font-face {
+    font-family: 'Days One';
+    src: url('~fonts/font-files/Days_One/DaysOne-Regular.ttf') format('truetype');
+    font-weight: 400 800;
+}
+
+@font-face {
+    font-family: 'Merriweather';
+    src: url('~fonts/font-files/Merriweather/Merriweather-Regular.ttf') format('truetype');
+    font-weight: 400;
+}
+
+@font-face {
+    font-family: 'Merriweather';
+    src: url('~fonts/font-files/Merriweather/Merriweather-Bold.ttf') format('truetype');
+    font-weight: 800;
+}
+</file>
+
+<file path="src/images/arrow-down.svg">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+<path d="M6 9L12 15L18 9" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+</file>
+
+<file path="src/images/arrow.svg">
+<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" fill="none">
+  <path d="M24 38L10 24L24 10" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M38 24H10" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+</file>
+
+<file path="src/images/narrow.svg">
+<svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 25 25" fill="none">
+  <path d="M2.0835 12.5H8.3335" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M22.9165 12.5H16.6665" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M12.5 2.08337V4.16671" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M12.5 8.33337V10.4167" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M12.5 14.5834V16.6667" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M12.5 20.8334V22.9167" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M19.7915 9.375L16.6665 12.5L19.7915 15.625" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M5.2085 15.625L8.3335 12.5L5.2085 9.375" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+</file>
+
+<file path="src/images/react.svg">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img" class="iconify iconify--logos" width="35.93" height="32" preserveAspectRatio="xMidYMid meet" viewBox="0 0 256 228"><path fill="#00D8FF" d="M210.483 73.824a171.49 171.49 0 0 0-8.24-2.597c.465-1.9.893-3.777 1.273-5.621c6.238-30.281 2.16-54.676-11.769-62.708c-13.355-7.7-35.196.329-57.254 19.526a171.23 171.23 0 0 0-6.375 5.848a155.866 155.866 0 0 0-4.241-3.917C100.759 3.829 77.587-4.822 63.673 3.233C50.33 10.957 46.379 33.89 51.995 62.588a170.974 170.974 0 0 0 1.892 8.48c-3.28.932-6.445 1.924-9.474 2.98C17.309 83.498 0 98.307 0 113.668c0 15.865 18.582 31.778 46.812 41.427a145.52 145.52 0 0 0 6.921 2.165a167.467 167.467 0 0 0-2.01 9.138c-5.354 28.2-1.173 50.591 12.134 58.266c13.744 7.926 36.812-.22 59.273-19.855a145.567 145.567 0 0 0 5.342-4.923a168.064 168.064 0 0 0 6.92 6.314c21.758 18.722 43.246 26.282 56.54 18.586c13.731-7.949 18.194-32.003 12.4-61.268a145.016 145.016 0 0 0-1.535-6.842c1.62-.48 3.21-.974 4.76-1.488c29.348-9.723 48.443-25.443 48.443-41.52c0-15.417-17.868-30.326-45.517-39.844Zm-6.365 70.984c-1.4.463-2.836.91-4.3 1.345c-3.24-10.257-7.612-21.163-12.963-32.432c5.106-11 9.31-21.767 12.459-31.957c2.619.758 5.16 1.557 7.61 2.4c23.69 8.156 38.14 20.213 38.14 29.504c0 9.896-15.606 22.743-40.946 31.14Zm-10.514 20.834c2.562 12.94 2.927 24.64 1.23 33.787c-1.524 8.219-4.59 13.698-8.382 15.893c-8.067 4.67-25.32-1.4-43.927-17.412a156.726 156.726 0 0 1-6.437-5.87c7.214-7.889 14.423-17.06 21.459-27.246c12.376-1.098 24.068-2.894 34.671-5.345a134.17 134.17 0 0 1 1.386 6.193ZM87.276 214.515c-7.882 2.783-14.16 2.863-17.955.675c-8.075-4.657-11.432-22.636-6.853-46.752a156.923 156.923 0 0 1 1.869-8.499c10.486 2.32 22.093 3.988 34.498 4.994c7.084 9.967 14.501 19.128 21.976 27.15a134.668 134.668 0 0 1-4.877 4.492c-9.933 8.682-19.886 14.842-28.658 17.94ZM50.35 144.747c-12.483-4.267-22.792-9.812-29.858-15.863c-6.35-5.437-9.555-10.836-9.555-15.216c0-9.322 13.897-21.212 37.076-29.293c2.813-.98 5.757-1.905 8.812-2.773c3.204 10.42 7.406 21.315 12.477 32.332c-5.137 11.18-9.399 22.249-12.634 32.792a134.718 134.718 0 0 1-6.318-1.979Zm12.378-84.26c-4.811-24.587-1.616-43.134 6.425-47.789c8.564-4.958 27.502 2.111 47.463 19.835a144.318 144.318 0 0 1 3.841 3.545c-7.438 7.987-14.787 17.08-21.808 26.988c-12.04 1.116-23.565 2.908-34.161 5.309a160.342 160.342 0 0 1-1.76-7.887Zm110.427 27.268a347.8 347.8 0 0 0-7.785-12.803c8.168 1.033 15.994 2.404 23.343 4.08c-2.206 7.072-4.956 14.465-8.193 22.045a381.151 381.151 0 0 0-7.365-13.322Zm-45.032-43.861c5.044 5.465 10.096 11.566 15.065 18.186a322.04 322.04 0 0 0-30.257-.006c4.974-6.559 10.069-12.652 15.192-18.18ZM82.802 87.83a323.167 323.167 0 0 0-7.227 13.238c-3.184-7.553-5.909-14.98-8.134-22.152c7.304-1.634 15.093-2.97 23.209-3.984a321.524 321.524 0 0 0-7.848 12.897Zm8.081 65.352c-8.385-.936-16.291-2.203-23.593-3.793c2.26-7.3 5.045-14.885 8.298-22.6a321.187 321.187 0 0 0 7.257 13.246c2.594 4.48 5.28 8.868 8.038 13.147Zm37.542 31.03c-5.184-5.592-10.354-11.779-15.403-18.433c4.902.192 9.899.29 14.978.29c5.218 0 10.376-.117 15.453-.343c-4.985 6.774-10.018 12.97-15.028 18.486Zm52.198-57.817c3.422 7.8 6.306 15.345 8.596 22.52c-7.422 1.694-15.436 3.058-23.88 4.071a382.417 382.417 0 0 0 7.859-13.026a347.403 347.403 0 0 0 7.425-13.565Zm-16.898 8.101a358.557 358.557 0 0 1-12.281 19.815a329.4 329.4 0 0 1-23.444.823c-7.967 0-15.716-.248-23.178-.732a310.202 310.202 0 0 1-12.513-19.846h.001a307.41 307.41 0 0 1-10.923-20.627a310.278 310.278 0 0 1 10.89-20.637l-.001.001a307.318 307.318 0 0 1 12.413-19.761c7.613-.576 15.42-.876 23.31-.876H128c7.926 0 15.743.303 23.354.883a329.357 329.357 0 0 1 12.335 19.695a358.489 358.489 0 0 1 11.036 20.54a329.472 329.472 0 0 1-11 20.722Zm22.56-122.124c8.572 4.944 11.906 24.881 6.52 51.026c-.344 1.668-.73 3.367-1.15 5.09c-10.622-2.452-22.155-4.275-34.23-5.408c-7.034-10.017-14.323-19.124-21.64-27.008a160.789 160.789 0 0 1 5.888-5.4c18.9-16.447 36.564-22.941 44.612-18.3ZM128 90.808c12.625 0 22.86 10.235 22.86 22.86s-10.235 22.86-22.86 22.86s-22.86-10.235-22.86-22.86s10.235-22.86 22.86-22.86Z"></path></svg>
+</file>
+
+<file path="src/images/typescript.svg">
+<?xml version="1.0" encoding="utf-8"?><!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+<svg width="800px" height="800px" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><title>file_type_typescript</title><path d="M23.827,8.243A4.424,4.424,0,0,1,26.05,9.524a5.853,5.853,0,0,1,.852,1.143c.011.045-1.534,1.083-2.471,1.662-.034.023-.169-.124-.322-.35a2.014,2.014,0,0,0-1.67-1c-1.077-.074-1.771.49-1.766,1.433a1.3,1.3,0,0,0,.153.666c.237.49.677.784,2.059,1.383,2.544,1.095,3.636,1.817,4.31,2.843a5.158,5.158,0,0,1,.416,4.333,4.764,4.764,0,0,1-3.932,2.815,10.9,10.9,0,0,1-2.708-.028,6.531,6.531,0,0,1-3.616-1.884,6.278,6.278,0,0,1-.926-1.371,2.655,2.655,0,0,1,.327-.208c.158-.09.756-.434,1.32-.761L19.1,19.6l.214.312a4.771,4.771,0,0,0,1.35,1.292,3.3,3.3,0,0,0,3.458-.175,1.545,1.545,0,0,0,.2-1.974c-.276-.395-.84-.727-2.443-1.422a8.8,8.8,0,0,1-3.349-2.055,4.687,4.687,0,0,1-.976-1.777,7.116,7.116,0,0,1-.062-2.268,4.332,4.332,0,0,1,3.644-3.374A9,9,0,0,1,23.827,8.243ZM15.484,9.726l.011,1.454h-4.63V24.328H7.6V11.183H2.97V9.755A13.986,13.986,0,0,1,3.01,8.289c.017-.023,2.832-.034,6.245-.028l6.211.017Z" style="fill:#007acc"/></svg>
+</file>
+
+<file path="src/images/wide.svg">
+<svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 25 25" fill="none">
+  <path d="M16.6665 12.5H22.9165" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M8.3335 12.5H2.0835" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M12.5 2.08337V4.16671" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M12.5 8.33337V10.4167" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M12.5 14.5834V16.6667" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M12.5 20.8334V22.9167" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M19.7915 15.625L22.9165 12.5L19.7915 9.375" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M5.2085 9.375L2.0835 12.5L5.2085 15.625" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+</file>
+
+<file path="src/styles/index.module.scss">
+.main {
+    --bg-color: #ffffff;
+    background-color: var(--bg-color, #ffffff);
+}
+</file>
+
+<file path="src/styles/index.scss">
+/* Подключаем стили со шрифтами, так как они нужны на всех страницах */
+
+@import url('~fonts/font.scss');
+
+body {
+	margin: 0;
+	line-height: 1;
+}
+
+/* Отключаем браузерные дефолтные стили для всех элементов */
+
+html,
+body,
+div,
+span,
+applet,
+object,
+iframe,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote,
+pre,
+a,
+abbr,
+acronym,
+address,
+big,
+cite,
+code,
+del,
+dfn,
+em,
+img,
+ins,
+kbd,
+q,
+s,
+samp,
+small,
+strike,
+strong,
+sub,
+sup,
+tt,
+var,
+b,
+u,
+i,
+center,
+dl,
+dt,
+dd,
+ol,
+ul,
+li,
+fieldset,
+form,
+label,
+legend,
+table,
+caption,
+tbody,
+tfoot,
+thead,
+tr,
+th,
+td,
+article,
+aside,
+canvas,
+details,
+embed,
+figure,
+figcaption,
+footer,
+header,
+hgroup,
+menu,
+nav,
+output,
+ruby,
+section,
+summary,
+time,
+mark,
+audio,
+video {
+	margin: 0;
+	padding: 0;
+	font: inherit;
+	font-size: 100%;
+	vertical-align: baseline;
+	border: 0;
+}
+
+/* HTML5 display-role reset for older browsers */
+
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+menu,
+nav,
+section {
+	display: block;
+}
+
+ol,
+ul {
+	list-style: none;
+}
+
+blockquote,
+q {
+	quotes: none;
+}
+
+blockquote::before,
+blockquote::after,
+q::before,
+q::after {
+	content: '';
+	content: none;
+}
+
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+</file>
+
+<file path="src/custom.d.ts">
+declare module '*.svg' {
+	import React = require('react');
+	export const ReactComponent: React.FunctionComponent<
+		React.SVGProps<SVGSVGElement>
+	>;
+	const src: string;
+	export default src;
+}
+declare module '*.png' {
+	const content: any;
+	export default content;
+}
+declare module '*.jpg' {
+	const content: any;
+	export default content;
+}
+declare module '*.json' {
+	const content: any;
+	export default content;
+}
+
+declare module '*.module.css' {
+	const classes: { [key: string]: string };
+	export default classes;
+}
+
+declare module '*.module.scss' {
+	const classes: { [key: string]: string };
+	export default classes;
+}
+
+declare module '*.module.sass' {
+	const classes: { [key: string]: string };
+	export default classes;
+}
+</file>
+
+<file path="src/index.tsx">
+import clsx from 'clsx';
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
+
+import { Article } from './components/article/Article';
+import {
+	ArticleParamsForm,
+	BackgroundColorSelect,
+	ContentWidthSelect,
+	FontColorSelect,
+	FontFamilySelect,
+	FontSizeRadioGroup,
+	useArticleStyleControls,
+} from './components/article-params-form';
+import { Separator } from './components/separator';
+import { Spacing } from './components/spacing';
+import styles from './styles/index.module.scss';
+import './styles/index.scss';
+
+const domNode = document.getElementById('root') as HTMLDivElement;
+const root = createRoot(domNode);
+
+const App = () => {
+	const { articleStyles, updateStyles, resetStyles, registerStyleControl } =
+		useArticleStyleControls();
+
+	return (
+		<div className={clsx(styles.main)} style={articleStyles}>
+			<ArticleParamsForm onSubmit={updateStyles} onReset={resetStyles}>
+				<Spacing size={50} />
+				<FontFamilySelect {...registerStyleControl('fontFamilyOption')} />
+
+				<Spacing size={50} />
+				<FontSizeRadioGroup {...registerStyleControl('fontSizeOption')} />
+
+				<Spacing size={50} />
+				<FontColorSelect {...registerStyleControl('fontColor')} />
+
+				<Spacing size={50} />
+				<Separator />
+
+				<Spacing size={50} />
+				<BackgroundColorSelect {...registerStyleControl('backgroundColor')} />
+
+				<Spacing size={50} />
+				<ContentWidthSelect {...registerStyleControl('contentWidth')} />
+			</ArticleParamsForm>
+			<Article />
+		</div>
+	);
+};
+
+root.render(
+	<StrictMode>
+		<App />
+	</StrictMode>
+);
+</file>
+
+<file path="webpack/webpack.common.js">
+const HTMLWebpackPlugins = require('html-webpack-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const path = require('path'); //для того чтобы превратить отнсительный путь в абсолютный мы будем использовать пакет path
+const webpack = require('webpack');
+
+const production = process.env.NODE_ENV === 'production';
+
+module.exports = {
+	entry: path.resolve(__dirname, '..', './src/index.tsx'), //точка входа в наше приложение содержит абсолютный путь к index.ts
+	output: {
+		path: path.resolve(__dirname, '..', './dist'), //путь куда будет собираться наш проект
+		filename: production
+			? 'static/scripts/[name].[contenthash].js'
+			: 'static/scripts/[name].js', // имя нашего бандла
+		publicPath: '/',
+	},
+	//Нужно помочь вебпаку научится работать с jsx и tsx файлами для этого используют ts loader
+	module: {
+		rules: [
+			{
+				test: /\.[tj]sx?$/, //содержит регулярное выражение, которое содержит информацию какие файлы должны обрабатываться этим loader'ом
+				use: [
+					{
+						loader: 'ts-loader',
+					},
+				], // для того чтобы ts-loader корректно отработал нам нужен tsconfig его можно создать вручную, а можно создать автоматически
+				/** чтобы проиницилизовать его автоматически можно установить пакет typesctipt глобально или использовать npx выполнив команду npx tsc --init
+				После создания конфига нужно включить "allowJs": true, чтобы работать не только c typescript, также меняем "jsx": "react" чтобы мы могли работать с react компонентами и включаем карту ресурсов "sourceMap": true, пока на этом все вернемся в этот конфиг позже*/
+				exclude: /node_modules/,
+			},
+			{
+				test: /\.(png|jpg|gif|webp)$/,
+				type: 'asset/resource',
+				generator: {
+					filename: 'static/images/[hash][ext][query]',
+				},
+			},
+			{
+				test: /\.(woff(2)?|eot|ttf|otf)$/,
+				type: 'asset/resource',
+				generator: {
+					filename: 'static/fonts/[hash][ext][query]',
+				},
+			},
+			{
+				test: /\.svg$/i,
+				issuer: /\.[jt]sx?$/,
+				use: ['@svgr/webpack', 'url-loader'],
+			},
+			{
+				test: /\.(sa|sc|c)ss$/,
+				use: [
+					production ? MiniCssExtractPlugin.loader : 'style-loader',
+					{
+						loader: 'css-loader',
+						options: {
+							modules: {
+								mode: 'local',
+								localIdentName: '[name]__[local]__[hash:base64:5]',
+								auto: /\.module\.\w+$/i,
+							},
+							importLoaders: 2, //Значение 2 говорит о том, что некоторые трансформации PostCSS нужно применить до css-loader.
+						},
+					},
+					'postcss-loader',
+					{
+						loader: 'sass-loader',
+						options: {
+							sourceMap: true,
+						},
+					},
+				],
+			},
+		],
+	},
+	resolve: {
+		extensions: ['.js', '.jsx', '.tsx', '.ts', '.json'], //указываем файлы с которыми будет работать webpack
+		alias: {
+			fonts: path.resolve(__dirname, '..', './src/fonts'),
+			src: path.resolve(__dirname, '..', './src'),
+			components: path.resolve(__dirname, '..', './src/components'),
+		},
+	},
+	plugins: [
+		new HTMLWebpackPlugins({
+			template: path.resolve(__dirname, '..', './public/index.html'),
+		}),
+		new CleanWebpackPlugin(),
+		new MiniCssExtractPlugin({
+			filename: production
+				? 'static/styles/[name].[contenthash].css'
+				: 'static/styles/[name].css',
+		}),
+		new webpack.EnvironmentPlugin({
+			NODE_ENV: 'development', // значение по умолчанию 'development' если переменная process.env.NODE_ENV не передана
+		}),
+	],
+};
+</file>
+
+<file path="webpack/webpack.config.js">
+const { merge } = require('webpack-merge');
+const commonConfig = require('./webpack.common.js');
+
+module.exports = (envVars) => {
+	const { env } = envVars;
+	const envConfig = require(`./webpack.${env}.js`);
+	const config = merge(commonConfig, envConfig);
+	return config;
+};
+</file>
+
+<file path="webpack/webpack.dev.js">
+const path = require('path'); //для того чтобы превратить отнсительный путь в абсолютный мы будем использовать пакет path
+const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
+
+module.exports = {
+	mode: 'development',
+	devtool: 'eval-source-map',
+	devServer: {
+		historyApiFallback: true,
+		static: path.resolve(__dirname, './dist'), // путь, куда "смотрит" режим разработчика
+		// compress: true, // это ускорит загрузку в режиме разработки
+		port: 8080, // порт, чтобы открывать сайт по адресу localhost:8080, но можно поменять порт
+		open: true, // сайт будет открываться сам при запуске npm run dev
+		hot: true,
+	},
+	plugins: [new ReactRefreshWebpackPlugin()],
+};
+</file>
+
+<file path="webpack/webpack.prod.js">
+module.exports = {
+	mode: 'production',
+	devtool: false,
+};
+</file>
+
+<file path=".editorconfig">
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+indent_size = 4
+indent_style = tab
+trim_trailing_whitespace = true
+
+[*.md]
+trim_trailing_whitespace = false
+
+[{*.json,*.yml}]
+indent_size = 2
+</file>
+
+<file path=".eslintignore">
+node_modules
+public
+.eslintrc.js
+storybook-static
+build
+dist
+webpack/*.js
+package*.json
+</file>
+
+<file path=".eslintrc.js">
+module.exports = {
+	parser: '@typescript-eslint/parser',
+	parserOptions: {
+		ecmaVersion: 2020,
+		sourceType: 'module',
+		warnOnUnsupportedTypeScriptVersion: false,
+	},
+	settings: {
+		react: {
+			version: 'detect',
+		},
+	},
+	extends: [
+		'plugin:@typescript-eslint/recommended',
+		'plugin:prettier/recommended',
+		'prettier',
+		'plugin:react/recommended',
+		'plugin:react-hooks/recommended',
+		'plugin:import/errors',
+		'plugin:import/warnings',
+		'plugin:import/typescript',
+		'plugin:jsx-a11y/recommended',
+		'plugin:eslint-comments/recommended',
+	],
+	rules: {
+		semi: [2, 'always'],
+		quotes: [2, 'single', { avoidEscape: true }],
+		'no-unused-vars': 'off',
+		'@typescript-eslint/no-unused-vars': ['error'],
+		'@typescript-eslint/no-var-requires': 'off',
+		'react/prop-types': 'off',
+		'react/jsx-uses-react': 'off',
+		'react/react-in-jsx-scope': 'off',
+		'@typescript-eslint/explicit-module-boundary-types': 'off',
+	},
+};
+</file>
+
+<file path=".gitattributes">
+# Auto detect text files and perform LF normalization
+* text=auto
+</file>
+
+<file path=".gitignore">
+# Dependency directories
+node_modules/
+.idea
+.vscode
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# dotenv environment variables file
+.env
+.env.test
+
+build
+dist
+.yarn
+</file>
+
+<file path=".prettierignore">
+build
+dist
+storybook-static
+</file>
+
+<file path=".prettierrc.js">
+module.exports = {
+	semi: true,
+	trailingComma: 'es5',
+	singleQuote: true,
+	jsxSingleQuote: true,
+	bracketSameLine: true,
+	printWidth: 80,
+	useTabs: true,
+	tabWidth: 2,
+	endOfLine: 'lf',
+};
+</file>
+
+<file path=".stylelintignore">
+**/normalize.css
+**/normalize.min.css
+**/fonts/
+**/images/
+**/img/
+</file>
+
+<file path=".stylelintrc.json">
+{
+	"extends": [
+		"stylelint-config-standard"
+	],
+	"plugins": [
+		"stylelint-order"
+	],
+	"rules": {
+		"color-no-invalid-hex": true,
+		"font-family-no-duplicate-names": true,
+		"function-calc-no-unspaced-operator": true,
+		"function-linear-gradient-no-nonstandard-direction": true,
+		"string-no-newline": true,
+		"unit-no-unknown": true,
+		"property-no-unknown": [
+			true,
+			{
+				"ignoreProperties": [
+					"print-color-adjust"
+				]
+			}
+		],
+		"declaration-block-no-shorthand-property-overrides": true,
+		"block-no-empty": true,
+		"selector-pseudo-class-no-unknown": true,
+		"selector-pseudo-element-no-unknown": true,
+		"selector-type-no-unknown": true,
+		"media-feature-name-no-unknown": true,
+		"at-rule-no-unknown": true,
+		"comment-no-empty": true,
+		"no-empty-source": true,
+		"no-invalid-double-slash-comments": true,
+		"no-unknown-animations": true,
+		"function-url-no-scheme-relative": true,
+		"number-max-precision": 2,
+		"declaration-block-single-line-max-declarations": 1,
+		"comment-word-disallowed-list": [
+			"todo"
+		],
+		"color-hex-length": "long",
+		"font-family-name-quotes": "always-unless-keyword",
+		"function-name-case": "lower",
+		"function-url-quotes": "always",
+		"length-zero-no-unit": true,
+		"value-keyword-case": [
+			"lower",
+			{
+				"ignoreKeywords": [
+					"A4"
+				]
+			}
+		],
+		"declaration-empty-line-before": "never",
+		"declaration-property-unit-allowed-list": {
+			"line-height": []
+		},
+		"selector-class-pattern": "^[a-z][a-zA-Z0-9]*(-[a-zA-Z0-9]+)*(__[a-z0-9]+(-[a-z0-9]+)*)?(_[a-z0-9]+(-[a-z0-9]+)*)?(_[a-z0-9]+(-[a-z0-9]+)*)?$",
+		"selector-attribute-quotes": "always",
+		"selector-pseudo-element-colon-notation": "double",
+		"selector-type-case": "lower",
+		"rule-empty-line-before": [
+			"always-multi-line",
+			{
+				"except": [
+					"first-nested"
+				]
+			}
+		],
+		"at-rule-empty-line-before": [
+			"always",
+			{
+				"except": [
+					"blockless-after-blockless",
+					"first-nested"
+				]
+			}
+		],
+		"comment-empty-line-before": [
+			"always",
+			{
+				"except": [
+					"first-nested"
+				]
+			}
+		],
+		"comment-whitespace-inside": "always",
+		"order/order": [
+			"custom-properties",
+			"declarations"
+		],
+		"order/properties-order": [
+			"all",
+			"position",
+			"top",
+			"right",
+			"bottom",
+			"left",
+			"inset",
+			"inset-block-start",
+			"inset-block-end",
+			"inset-inline-start",
+			"inset-inline-end",
+			"z-index",
+			"display",
+			"grid-template",
+			"grid-template-rows",
+			"grid-template-columns",
+			"grid-template-areas",
+			"grid-auto-rows",
+			"grid-auto-columns",
+			"grid-auto-flow",
+			"grid-area",
+			"grid-row",
+			"grid-column",
+			"grid-row-start",
+			"grid-row-end",
+			"grid-column-start",
+			"grid-column-end",
+			"flex",
+			"flex-grow",
+			"flex-shrink",
+			"flex-basis",
+			"flex-flow",
+			"flex-direction",
+			"flex-wrap",
+			"order",
+			"justify-content",
+			"justify-items",
+			"justify-self",
+			"align-content",
+			"align-items",
+			"align-self",
+			"grid-gap",
+			"gap",
+			"grid-row-gap",
+			"row-gap",
+			"grid-column-gap",
+			"column-gap",
+			"float",
+			"clear",
+			"box-sizing",
+			"writing-mode",
+			"width",
+			"min-width",
+			"max-width",
+			"height",
+			"min-height",
+			"max-height",
+			"inline-size",
+			"min-inline-size",
+			"max-inline-size",
+			"block-size",
+			"min-block-size",
+			"max-block-size",
+			"margin",
+			"margin-top",
+			"margin-right",
+			"margin-bottom",
+			"margin-left",
+			"margin-block-start",
+			"margin-block-end",
+			"margin-inline-start",
+			"margin-inline-end",
+			"padding",
+			"padding-top",
+			"padding-right",
+			"padding-bottom",
+			"padding-left",
+			"padding-block-start",
+			"padding-block-end",
+			"padding-inline-start",
+			"padding-inline-end",
+			"overflow",
+			"overflow-x",
+			"overflow-y",
+			"color",
+			"font",
+			"font-weight",
+			"font-size",
+			"font-family",
+			"font-style",
+			"font-display",
+			"font-variant",
+			"font-size-adjust",
+			"font-stretch",
+			"font-effect",
+			"font-emphasize",
+			"font-emphasize-position",
+			"font-emphasize-style",
+			"font-smooth",
+			"line-height",
+			"direction",
+			"letter-spacing",
+			"white-space",
+			"text-align",
+			"text-align-last",
+			"text-transform",
+			"text-decoration",
+			"text-emphasis",
+			"text-emphasis-color",
+			"text-emphasis-style",
+			"text-emphasis-position",
+			"text-indent",
+			"text-justify",
+			"text-outline",
+			"text-wrap",
+			"text-overflow",
+			"text-overflow-ellipsis",
+			"text-overflow-mode",
+			"text-orientation",
+			"text-shadow",
+			"vertical-align",
+			"word-wrap",
+			"word-break",
+			"word-spacing",
+			"overflow-wrap",
+			"tab-size",
+			"hyphens",
+			"unicode-bidi",
+			"columns",
+			"column-count",
+			"column-fill",
+			"column-gap",
+			"column-rule",
+			"column-rule-color",
+			"column-rule-style",
+			"column-rule-width",
+			"column-span",
+			"column-width",
+			"page-break-after",
+			"page-break-before",
+			"page-break-inside",
+			"src",
+			"list-style",
+			"list-style-position",
+			"list-style-type",
+			"list-style-image",
+			"table-layout",
+			"empty-cells",
+			"caption-side",
+			"background",
+			"background-color",
+			"background-image",
+			"background-repeat",
+			"background-position",
+			"background-position-x",
+			"background-position-y",
+			"background-size",
+			"background-clip",
+			"background-origin",
+			"background-attachment",
+			"background-blend-mode",
+			"box-decoration-break",
+			"border",
+			"border-width",
+			"border-style",
+			"border-color",
+			"border-top",
+			"border-block-start",
+			"border-top-width",
+			"border-top-style",
+			"border-top-color",
+			"border-right",
+			"border-inline-end",
+			"border-right-width",
+			"border-right-style",
+			"border-right-color",
+			"border-bottom",
+			"border-block-end",
+			"border-bottom-width",
+			"border-bottom-style",
+			"border-bottom-color",
+			"border-left",
+			"border-inline-start",
+			"border-left-width",
+			"border-left-style",
+			"border-left-color",
+			"border-radius",
+			"border-top-left-radius",
+			"border-top-right-radius",
+			"border-bottom-right-radius",
+			"border-bottom-left-radius",
+			"border-image",
+			"border-image-source",
+			"border-image-slice",
+			"border-image-width",
+			"border-image-outset",
+			"border-image-repeat",
+			"border-collapse",
+			"border-spacing",
+			"outline",
+			"outline-width",
+			"outline-style",
+			"outline-color",
+			"outline-offset",
+			"box-shadow",
+			"visibility",
+			"cursor",
+			"mix-blend-mode",
+			"backdrop-filter",
+			"will-change",
+			"transform",
+			"transform-origin",
+			"transform-style",
+			"backface-visibility",
+			"opacity",
+			"filter",
+			"perspective",
+			"perspective-origin",
+			"transition",
+			"transition-delay",
+			"transition-timing-function",
+			"transition-duration",
+			"transition-property",
+			"animation",
+			"animation-name",
+			"animation-duration",
+			"animation-play-state",
+			"animation-timing-function",
+			"animation-delay",
+			"animation-iteration-count",
+			"animation-direction",
+			"animation-fill-mode",
+			"appearance",
+			"clip",
+			"clip-path",
+			"counter-reset",
+			"counter-increment",
+			"resize",
+			"user-select",
+			"nav-index",
+			"nav-up",
+			"nav-right",
+			"nav-down",
+			"nav-left",
+			"pointer-events",
+			"quotes",
+			"touch-action",
+			"zoom",
+			"fill",
+			"fill-rule",
+			"clip-rule",
+			"stroke",
+			"stroke-width"
+		]
+	}
+}
+</file>
+
+<file path=".yarnrc.yml">
+nodeLinker: node-modules
+</file>
+
+<file path="package.json">
+{
+	"name": "Blog-customizer",
+	"version": "1.0.0",
+	"main": "index.js",
+	"license": "MIT",
+	"devDependencies": {
+		"@pmmmwh/react-refresh-webpack-plugin": "^0.5.10",
+		"@storybook/addon-essentials": "^7.6.10",
+		"@storybook/addon-interactions": "^7.6.10",
+		"@storybook/addon-links": "^7.6.10",
+		"@storybook/addon-onboarding": "^1.0.10",
+		"@storybook/addon-styling-webpack": "^0.0.6",
+		"@storybook/blocks": "^7.6.10",
+		"@storybook/react": "^7.6.10",
+		"@storybook/react-webpack5": "^7.6.10",
+		"@storybook/test": "^7.6.10",
+		"@svgr/webpack": "^8.0.1",
+		"@types/react": "^18.2.0",
+		"@types/react-dom": "^18.2.1",
+		"@typescript-eslint/eslint-plugin": "^5.59.11",
+		"@typescript-eslint/parser": "^5.59.11",
+		"autoprefixer": "^10.4.14",
+		"clean-webpack-plugin": "^4.0.0",
+		"commitizen": "^4.3.0",
+		"cross-env": "^7.0.3",
+		"css-loader": "^6.8.1",
+		"cssnano": "^6.0.1",
+		"cz-conventional-changelog": "^3.3.0",
+		"eslint": "^8.42.0",
+		"eslint-config-prettier": "^8.8.0",
+		"eslint-plugin-eslint-comments": "^3.2.0",
+		"eslint-plugin-import": "^2.27.5",
+		"eslint-plugin-jsx-a11y": "^6.7.1",
+		"eslint-plugin-prettier": "^4.2.1",
+		"eslint-plugin-react": "^7.32.2",
+		"eslint-plugin-react-hooks": "^4.6.0",
+		"html-webpack-plugin": "^5.5.1",
+		"husky": "^9.1.7",
+		"lint-staged": "^13.2.2",
+		"merge": "^2.1.1",
+		"mini-css-extract-plugin": "^2.7.6",
+		"postcss-loader": "^7.3.3",
+		"prettier": "^2.8.8",
+		"react-refresh": "^0.14.0",
+		"resolve-url-loader": "^5.0.0",
+		"sass": "^1.69.7",
+		"sass-loader": "^13.3.3",
+		"storybook": "^7.6.10",
+		"style-loader": "^3.3.3",
+		"stylelint": "^15.7.0",
+		"stylelint-config-standard": "^33.0.0",
+		"stylelint-order": "^6.0.3",
+		"ts-loader": "^9.4.3",
+		"typescript": "^5.0.4",
+		"typescript-plugin-css-modules": "^5.0.1",
+		"url-loader": "^4.1.1",
+		"webpack": "^5.81.0",
+		"webpack-cli": "^5.0.2",
+		"webpack-dev-server": "^4.15.0"
+	},
+	"scripts": {
+		"build": "cross-env NODE_ENV=production webpack --config webpack/webpack.config.js --env env=prod",
+		"start": "webpack serve --config webpack/webpack.config.js --env env=dev",
+		"stylelint": "stylelint \"src/**/*.css\"",
+		"stylelint:fix": "stylelint \"src/**/*.css\" --fix",
+		"lint": "eslint --fix \"./src/**/*.{js,jsx,ts,tsx,json}\"",
+		"format": "prettier --write \"./src/**/*.{js,jsx,ts,tsx,json,css,scss,md}\" --ignore-path ./.prettierignore",
+		"test": "yarn stylelint:fix && yarn lint && yarn format",
+		"prepare": "husky install",
+		"commit": "yarn test && cz",
+		"storybook": "storybook dev -p 6006",
+		"build-storybook": "storybook build"
+	},
+	"eslintConfig": {
+		"extends": [
+			"plugin:storybook/recommended"
+		]
+	},
+	"dependencies": {
+		"clsx": "^2.1.0",
+		"react": "^18.2.0",
+		"react-dom": "^18.2.0"
+	},
+	"lint-staged": {
+		"*.{css,scss}": "yarn stylelint:fix",
+		"*.{js,jsx,ts,tsx}": "yarn lint",
+		"*.{js,jsx,ts,tsx,json,css,scss,md}": "yarn format"
+	},
+	"config": {
+		"commitizen": {
+			"path": "./node_modules/cz-conventional-changelog"
+		}
+	},
+	"homepage": "./"
+}
+</file>
+
+<file path="postcss.config.js">
+const autoprefixer = require('autoprefixer');
+const cssnano = require('cssnano');
+
+module.exports = {
+	plugins: [autoprefixer, cssnano({ preset: 'default' })],
+};
+</file>
+
+<file path="README.md">
+# SP10_BlogCustomizer
+
+
+
+## Getting started
+
+To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+
+Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+
+## Add your files
+
+- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
+- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
+
+```
+cd existing_repo
+git remote add origin https://practicum.gitlab.yandexcloud.net/web-faculty-content/project-drafts/sp10_blogcustomizer.git
+git branch -M master
+git push -uf origin master
+```
+
+## Integrate with your tools
+
+- [ ] [Set up project integrations](https://practicum.gitlab.yandexcloud.net/web-faculty-content/project-drafts/sp10_blogcustomizer/-/settings/integrations)
+
+## Collaborate with your team
+
+- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
+- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
+- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
+- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
+- [ ] [Set auto-merge](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
+
+## Test and Deploy
+
+Use the built-in continuous integration in GitLab.
+
+- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
+- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
+- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
+- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
+- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+
+***
+
+# Editing this README
+
+When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
+
+## Suggestions for a good README
+
+Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+
+## Name
+Choose a self-explaining name for your project.
+
+## Description
+Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+
+## Badges
+On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+
+## Visuals
+Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+
+## Installation
+Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+
+## Usage
+Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+
+## Support
+Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+
+## Roadmap
+If you have ideas for releases in the future, it is a good idea to list them in the README.
+
+## Contributing
+State if you are open to contributions and what your requirements are for accepting them.
+
+For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
+
+You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
+
+## Authors and acknowledgment
+Show your appreciation to those who have contributed to the project.
+
+## License
+For open source projects, say how it is licensed.
+
+## Project status
+If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+</file>
+
+<file path="tsconfig.json">
+{
+	"compilerOptions": {
+		"target": "ES5" /* Specify ECMAScript target version: 'ES3' (default), 'ES5', 'ES2015', 'ES2016', 'ES2017', 'ES2018', 'ES2019', 'ES2020', or 'ESNEXT'. */,
+		"module": "ESNext" /* Specify module code generation: 'none', 'commonjs', 'amd', 'system', 'umd', 'es2015', 'es2020', or 'ESNext'. */,
+		"moduleResolution": "node" /* Specify module resolution strategy: 'node' (Node.js) or 'classic' (TypeScript pre-1.6). */ /* Type declaration files to be included in compilation. */,
+		"lib": [
+			"DOM",
+			"DOM.Iterable",
+			"ESNext"
+		] /* Specify library files to be included in the compilation. */,
+		"jsx": "react-jsx" /* Specify JSX code generation: 'preserve', 'react-native', 'react' or 'react-jsx'. */,
+		"isolatedModules": true /* Transpile each file as a separate module (similar to 'ts.transpileModule'). */,
+		"esModuleInterop": true /* Enables emit interoperability between CommonJS and ES Modules via creation of namespace objects for all imports. Implies 'allowSyntheticDefaultImports'. */,
+		"strict": true /* Enable all strict type-checking options. */,
+		"skipLibCheck": true /* Skip type checking of declaration files. */,
+		"forceConsistentCasingInFileNames": true /* Disallow inconsistently-cased references to the same file. */,
+		"resolveJsonModule": true,
+		"sourceMap": true,
+		"allowJs": true /* Allow javascript files to be compiled. Useful when migrating JS to TS */,
+		// "checkJs": true /* Report errors in .js files. Works in tandem with allowJs. */,
+		"plugins": [{ "name": "typescript-plugin-css-modules" }],
+		"baseUrl": "./",
+		// Важно держать конфиг элиасов тут в соответствии с конфигом элиасов в вебпаке (webpack.common.js - resolve.alias) и с конфигом сторибука (.storybook/main.ts - webpackFinal)
+		"paths": {
+			"src/*": ["src/*"],
+			"fonts/*": ["src/fonts/*"],
+			"components/*": ["src/components/*"]
+		}
+	},
+	"outDir": "./dist/",
+	"include": ["src/**/*"]
+}
+</file>
+
+</files>

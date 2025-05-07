@@ -1,19 +1,46 @@
+/* src/components/button/Button.module.scss */
+
 .button {
-  cursor: pointer;
   display: flex;
-  width: 210px;
-  height: 50px;
   justify-content: center;
   align-items: center;
-  text-align: center;
   box-sizing: border-box;
-  border: 1px solid #000;
+  width: 210px;
+  height: 50px;
+  text-align: center;
+  border: 1px solid #000000;
+  cursor: pointer;
+  font-weight: 800;
+  text-transform: uppercase;
+  transition: background-color 0.2s, color 0.2s;
 }
 
-.button:active {
-  background: var(--gold, #ffc802);
+/* Кнопка "Применить" — жёлтая */
+.apply {
+  background-color: #ffc802; /* дефолт: ярко-жёлтый фон */
+  color: #000000;            /* дефолт: черный текст */
+  
+  &:hover {
+    background-color: #ffd54f;  /* оттенок при hover */
+  }
+  
+  &:active {
+    background-color: #f7da71;  /* оттенок при нажатии */
+  }
 }
 
-.button:hover {
-  background: var(--gold, #ffc802);
+/* Кнопка "Сбросить" — белая */
+.reset {
+  background-color: #ffffff; /* дефолт: белый фон */
+  color: #000000;            /* дефолт: черный текст */
+  
+  &:hover {
+    background-color: #000000; /* при hover: черный фон */
+    color: #ffffff;            /* текст становится белым */
+  }
+  
+  &:active {
+    background-color: #555555; /* при нажатии: серый фон */
+    color: #ffffff;
+  }
 }
